@@ -1,0 +1,17 @@
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.exr filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+*.fbx filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Niveles/Valle/PuenteIchuVisual.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/CuerpoRealistaFlexible.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/CuerpoSinCabelloRigido.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/CuerpoSinRopa.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/CuerpoSinTirasHombro.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/RopaBase.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/RopaSinCapaRigida.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/RopaSinCapaVista.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/RopaSinTirasHombro.asset filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Personajes/Chasqui/RopaVista.asset filter=lfs diff=lfs merge=lfs -text

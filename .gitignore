@@ -1,0 +1,41 @@
+# Unity: generated and per-user files
+/ChasquiUnity/[Ll]ibrary/
+/ChasquiUnity/[Tt]emp/
+/ChasquiUnity/[Oo]bj/
+/ChasquiUnity/[Ll]ogs/
+/ChasquiUnity/UserSettings/
+/ChasquiUnity/Build/
+/ChasquiUnity/Builds/
+/ChasquiUnity/MemoryCaptures/
+/ChasquiUnity/Recordings/
+/ChasquiUnity/Assets/_Recovery/
+/ChasquiUnity/Assets/_Recovery.meta
+/.vs/
+/.idea/
+*.csproj
+*.sln
+*.slnx
+*.user
+*.pidb
+*.pdb
+*.opendb
+*.VC.db
+# Blender caches and automatic backups
+blendcache_*/
+*.blend1
+*.blend2
+*.blend@
+# Locally installed Windows fonts: see Tools/PrepararProyecto.ps1
+/ChasquiUnity/Assets/Resources/EstiloInca/TextoTradicional.ttf
+/ChasquiUnity/Assets/Resources/EstiloInca/TituloTradicional.ttf
+# Machine-specific shortcuts and private configuration
+*.lnk
+.DS_Store
+Thumbs.db
+desktop.ini
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+*.bak
