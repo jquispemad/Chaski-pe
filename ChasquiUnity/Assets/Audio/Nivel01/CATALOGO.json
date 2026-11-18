@@ -1,0 +1,298 @@
+[
+  {
+    "archivo": "Pasos/Tierra/Paso_01.ogg",
+    "uso": "Paso real sobre pasto, recorte desde 0.63s, filtrado y fundidos; caminar/correr segun cadencia",
+    "autor": "jedg",
+    "licencia": "CC0-1.0",
+    "fuente": "https://freesound.org/people/jedg/sounds/505833/",
+    "original": "Footsteps grass.wav (preescucha HQ)"
+  },
+  {
+    "archivo": "Pasos/Tierra/Paso_02.ogg",
+    "uso": "Paso real sobre pasto, recorte desde 1.78s, filtrado y fundidos; caminar/correr segun cadencia",
+    "autor": "jedg",
+    "licencia": "CC0-1.0",
+    "fuente": "https://freesound.org/people/jedg/sounds/505833/",
+    "original": "Footsteps grass.wav (preescucha HQ)"
+  },
+  {
+    "archivo": "Pasos/Tierra/Paso_03.ogg",
+    "uso": "Paso real sobre pasto, recorte desde 3.40s, filtrado y fundidos; caminar/correr segun cadencia",
+    "autor": "jedg",
+    "licencia": "CC0-1.0",
+    "fuente": "https://freesound.org/people/jedg/sounds/505833/",
+    "original": "Footsteps grass.wav (preescucha HQ)"
+  },
+  {
+    "archivo": "Pasos/Tierra/Paso_04.ogg",
+    "uso": "Paso real sobre pasto, recorte desde 5.05s, filtrado y fundidos; caminar/correr segun cadencia",
+    "autor": "jedg",
+    "licencia": "CC0-1.0",
+    "fuente": "https://freesound.org/people/jedg/sounds/505833/",
+    "original": "Footsteps grass.wav (preescucha HQ)"
+  },
+  {
+    "archivo": "Pasos/Tierra/Paso_05.ogg",
+    "uso": "Paso real sobre pasto, recorte desde 6.56s, filtrado y fundidos; caminar/correr segun cadencia",
+    "autor": "jedg",
+    "licencia": "CC0-1.0",
+    "fuente": "https://freesound.org/people/jedg/sounds/505833/",
+    "original": "Footsteps grass.wav (preescucha HQ)"
+  },
+  {
+    "archivo": "Pasos/Piedra/Paso_01.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_concrete_000.ogg"
+  },
+  {
+    "archivo": "Pasos/Piedra/Paso_02.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_concrete_001.ogg"
+  },
+  {
+    "archivo": "Pasos/Piedra/Paso_03.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_concrete_002.ogg"
+  },
+  {
+    "archivo": "Pasos/Piedra/Paso_04.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_concrete_003.ogg"
+  },
+  {
+    "archivo": "Pasos/Piedra/Paso_05.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_concrete_004.ogg"
+  },
+  {
+    "archivo": "Pasos/Madera/Paso_01.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_wood_000.ogg"
+  },
+  {
+    "archivo": "Pasos/Madera/Paso_02.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_wood_001.ogg"
+  },
+  {
+    "archivo": "Pasos/Madera/Paso_03.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_wood_002.ogg"
+  },
+  {
+    "archivo": "Pasos/Madera/Paso_04.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_wood_003.ogg"
+  },
+  {
+    "archivo": "Pasos/Madera/Paso_05.ogg",
+    "uso": "Caminar/correr: alternar variantes; madera solo en estructuras",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "footstep_wood_004.ogg"
+  },
+  {
+    "archivo": "Ropa/Tela_01.ogg",
+    "uso": "Roce de capa y agacharse/levantarse; usar con moderacion",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "cloth1.ogg"
+  },
+  {
+    "archivo": "Ropa/Tela_02.ogg",
+    "uso": "Roce de capa y agacharse/levantarse; usar con moderacion",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "cloth2.ogg"
+  },
+  {
+    "archivo": "Ropa/Tela_03.ogg",
+    "uso": "Roce de capa y agacharse/levantarse; usar con moderacion",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "cloth3.ogg"
+  },
+  {
+    "archivo": "Ropa/Tela_04.ogg",
+    "uso": "Roce de capa y agacharse/levantarse; usar con moderacion",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "cloth4.ogg"
+  },
+  {
+    "archivo": "Movimiento/Aterrizaje_suave_01.ogg",
+    "uso": "Contacto de sandalias al aterrizar",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "impactSoft_medium_000.ogg"
+  },
+  {
+    "archivo": "Movimiento/Aterrizaje_suave_02.ogg",
+    "uso": "Contacto de sandalias al aterrizar",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "impactSoft_medium_001.ogg"
+  },
+  {
+    "archivo": "Movimiento/Aterrizaje_suave_03.ogg",
+    "uso": "Contacto de sandalias al aterrizar",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "impactSoft_medium_002.ogg"
+  },
+  {
+    "archivo": "Movimiento/Impulso_salto_01.ogg",
+    "uso": "Impulso natural: contacto breve sobre tierra y roce de tela, mezcla filtrada y con fundido; sin efecto tonal",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds ; https://kenney.nl/assets/rpg-audio",
+    "original": "footstep_grass_000.ogg + cloth1.ogg"
+  },
+  {
+    "archivo": "Movimiento/Impulso_salto_02.ogg",
+    "uso": "Impulso natural: contacto breve sobre tierra y roce de tela, mezcla filtrada y con fundido; sin efecto tonal",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds ; https://kenney.nl/assets/rpg-audio",
+    "original": "footstep_grass_001.ogg + cloth2.ogg"
+  },
+  {
+    "archivo": "Movimiento/Caida_fuerte_01.ogg",
+    "uso": "Aterrizaje desde altura; no implica mecanica de dano",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "impactSoft_heavy_000.ogg"
+  },
+  {
+    "archivo": "Movimiento/Caida_fuerte_02.ogg",
+    "uso": "Aterrizaje desde altura; no implica mecanica de dano",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/impact-sounds",
+    "original": "impactSoft_heavy_001.ogg"
+  },
+  {
+    "archivo": "Quipu/Entrega_quipu_01.ogg",
+    "uso": "Manipular/entregar el quipu, sustituto de foley de cuero",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "handleSmallLeather.ogg"
+  },
+  {
+    "archivo": "Quipu/Entrega_quipu_02.ogg",
+    "uso": "Manipular/entregar el quipu, sustituto de foley de cuero",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "handleSmallLeather2.ogg"
+  },
+  {
+    "archivo": "Ambiente/Madera_cruje_01.ogg",
+    "uso": "Estructura/arco de madera; eventos espaciados",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "creak1.ogg"
+  },
+  {
+    "archivo": "Ambiente/Madera_cruje_02.ogg",
+    "uso": "Estructura/arco de madera; eventos espaciados",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "creak2.ogg"
+  },
+  {
+    "archivo": "Ambiente/Madera_cruje_03.ogg",
+    "uso": "Estructura/arco de madera; eventos espaciados",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/rpg-audio",
+    "original": "creak3.ogg"
+  },
+  {
+    "archivo": "Interfaz/Confirmar.ogg",
+    "uso": "Pulsar boton de manta",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/ui-audio",
+    "original": "click1.ogg"
+  },
+  {
+    "archivo": "Interfaz/Enfocar.ogg",
+    "uso": "Seleccion de boton",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/ui-audio",
+    "original": "rollover1.ogg"
+  },
+  {
+    "archivo": "Interfaz/Abrir_panel.ogg",
+    "uso": "Apertura de panel",
+    "autor": "Kenney",
+    "licencia": "CC0-1.0",
+    "fuente": "https://kenney.nl/assets/ui-audio",
+    "original": "switch1.ogg"
+  },
+  {
+    "archivo": "Musica/Pan-mart.ogg",
+    "uso": "Musica de fondo de flauta sintetizada; no grabacion tradicional andina",
+    "autor": "mart",
+    "licencia": "CC0-1.0",
+    "fuente": "https://opengameart.org/content/pan-flute",
+    "original": "Pan.ogg"
+  },
+  {
+    "archivo": "Pututu/Caracola-RoofDog.mp3",
+    "uso": "Llamada de caracola para pututu; grabacion no andina, version preview HQ",
+    "autor": "RoofDog / interprete Devin",
+    "licencia": "CC0-1.0",
+    "fuente": "https://freesound.org/people/RoofDog/sounds/78974/",
+    "original": "Conch.wav"
+  },
+  {
+    "archivo": "Ambiente/Viento-arboles-aves.mp3",
+    "uso": "Ambiente exterior: viento y aves; no fauna andina autenticada, preview HQ",
+    "autor": "felix.blume",
+    "licencia": "CC0-1.0",
+    "fuente": "https://freesound.org/people/felix.blume/sounds/414109/",
+    "original": "Wind in the trees - forest - some bird flying and singing"
+  }
+]

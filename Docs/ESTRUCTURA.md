@@ -4,7 +4,7 @@ La carpeta que se abre en Unity Hub es `ChasquiUnity`, no la raíz del repositor
 
 ## Unity / Assets
 
-- `Scenes`: `Nivel01_Valle` es el nivel principal; `Chasqui` conserva la escena del personaje.
+- `Scenes/Inicio` contiene la portada y el menú. `Scenes/Campana` contiene los niveles 1 y 2. `Scenes/Borradores` conserva el Valle y `Scenes/Personaje` contiene la escena de inspección del personaje.
 - `Personajes/Chasqui`: modelos importados, prefab, animaciones, materiales y mallas del personaje.
 - `Niveles/Valle`: terreno, puente y recursos del primer nivel.
 - `Resources/EstiloInca`: estilo de texto; las fuentes se preparan localmente.

@@ -98,7 +98,7 @@ public sealed class InterfazIncaChasqui : MonoBehaviour
         var estilo=new GUIStyle(texto){alignment=TextAnchor.MiddleCenter,fontSize=18};
         GUI.Label(new Rect(r.x+6,r.y+57,r.width-12,28),etiqueta,estilo);
     }
-    static Texture2D CrearTejido()
+    public static Texture2D CrearTejido()
     {
         const int W=840,H=530;var t=new Texture2D(W,H,TextureFormat.RGB24,false);t.name="Manta bordada · cochinilla e ichu";
         var p=new Color[W*H];

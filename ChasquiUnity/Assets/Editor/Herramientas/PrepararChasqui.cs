@@ -93,8 +93,8 @@ public static class PrepararChasqui
         cameraObj.transform.position = new Vector3(2.6f,1.55f,3.8f); cameraObj.transform.LookAt(bounds.center);
         cam.fieldOfView = 35f; cam.nearClipPlane = .05f; cam.farClipPlane = 100f;
         QualitySettings.antiAliasing = 4;
-        EditorSceneManager.SaveScene(scene,"Assets/Scenes/Chasqui.unity");
-        EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene("Assets/Scenes/Chasqui.unity",true) };
+        EditorSceneManager.SaveScene(scene,"Assets/Scenes/Personaje/Chasqui.unity");
+
         Selection.activeGameObject = root;
         if (SceneView.lastActiveSceneView != null) SceneView.lastActiveSceneView.FrameSelected();
         AssetDatabase.SaveAssets();
@@ -102,4 +102,3 @@ public static class PrepararChasqui
         if (missing != 0) throw new Exception("Revisar materiales sin correspondencia");
     }
 }
-

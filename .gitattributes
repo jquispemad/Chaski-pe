@@ -5,6 +5,9 @@
 *.tga filter=lfs diff=lfs merge=lfs -text
 *.blend filter=lfs diff=lfs merge=lfs -text
 *.fbx filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+ChasquiUnity/Assets/Niveles/SegundoRecorrido/CampesinoMalla*.asset filter=lfs diff=lfs merge=lfs -text
 ChasquiUnity/Assets/Niveles/Valle/PuenteIchuVisual.asset filter=lfs diff=lfs merge=lfs -text
 ChasquiUnity/Assets/Personajes/Chasqui/CuerpoRealistaFlexible.asset filter=lfs diff=lfs merge=lfs -text
 ChasquiUnity/Assets/Personajes/Chasqui/CuerpoSinCabelloRigido.asset filter=lfs diff=lfs merge=lfs -text

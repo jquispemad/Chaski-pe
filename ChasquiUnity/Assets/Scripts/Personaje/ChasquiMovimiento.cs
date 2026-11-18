@@ -18,6 +18,7 @@ public sealed class ChasquiMovimiento : MonoBehaviour
     public Transform visual;
     public Transform camara;
     public Animator animador;
+    public bool recorridoLateral;
 
     CharacterController cuerpo;
     Vector3 velocidadHorizontal;
@@ -26,6 +27,7 @@ public sealed class ChasquiMovimiento : MonoBehaviour
     float ultimoSuelo = float.NegativeInfinity;
     float ultimoSalto = float.NegativeInfinity;
     Vector3 inicio;
+    float ejeSendero;
     AgacharseChasqui agacharse;
     SaltoNaturalChasqui saltoVisual; float preparacion = -1f;
     public float VelocidadMaxima => velocidadCorrer;
@@ -34,7 +36,8 @@ public sealed class ChasquiMovimiento : MonoBehaviour
     void Awake()
     {
         cuerpo = GetComponent<CharacterController>();
-        inicio = transform.position; saltoVisual = GetComponent<SaltoNaturalChasqui>();agacharse=GetComponent<AgacharseChasqui>();
+        inicio = transform.position; ejeSendero = inicio.x;
+        saltoVisual = GetComponent<SaltoNaturalChasqui>();agacharse=GetComponent<AgacharseChasqui>();
         if (camara == null && Camera.main != null) camara = Camera.main.transform;
     }
 
@@ -56,15 +59,17 @@ public sealed class ChasquiMovimiento : MonoBehaviour
     {
         if (cuerpo == null) cuerpo = GetComponent<CharacterController>();
         if (dt <= 0f) return;
+        if (recorridoLateral) entrada.x = 0f;
         entrada = Vector2.ClampMagnitude(entrada, 1f);
         Vector3 adelante = camara != null ? Vector3.ProjectOnPlane(camara.forward, Vector3.up).normalized : Vector3.forward;
+        if (recorridoLateral) adelante = Vector3.forward;
         if (adelante.sqrMagnitude < .01f) adelante = Vector3.forward;
         Vector3 derecha = Vector3.Cross(Vector3.up, adelante);
         Vector3 direccion = adelante * entrada.y + derecha * entrada.x;
         if (entrada.sqrMagnitude > .001f) tiempoEnMovimiento += dt;
         else tiempoEnMovimiento = 0f;
         bool bajo=agacharse!=null&&(agacharse.Agachado||agacharse.Factor>.1f);if(bajo)saltar=false;
-        bool carreraActiva = !bajo&&(correr || tiempoEnMovimiento >= duracionPasoBreve);
+        bool carreraActiva = !recorridoLateral && !bajo && (correr || tiempoEnMovimiento >= duracionPasoBreve);
         velocidadHorizontal = Vector3.MoveTowards(velocidadHorizontal, direccion * (bajo ? 1.35f : carreraActiva ? velocidadCorrer : velocidad), aceleracion * dt);
 
         if (cuerpo.isGrounded && velocidadVertical <= 0f)
@@ -82,6 +87,13 @@ public sealed class ChasquiMovimiento : MonoBehaviour
         if(preparacion >= 0f) { preparacion -= dt; if(preparacion <= 0f){preparacion=-1f;velocidadVertical=Mathf.Sqrt(alturaSalto * -2f * gravedad);saltoIniciado=true;if(saltoVisual!=null)saltoVisual.Despegar();} }
         velocidadVertical += gravedad * dt;
         CollisionFlags contacto = cuerpo.Move((velocidadHorizontal + Vector3.up * velocidadVertical) * dt);
+        if (recorridoLateral && transform.position.x != ejeSendero)
+        {
+            // CharacterController can slide sideways when it hits an angled surface.
+            var posicion = transform.position;
+            posicion.x = ejeSendero;
+            transform.position = posicion;
+        }
         if ((contacto & CollisionFlags.Above) != 0 && velocidadVertical > 0f) velocidadVertical = 0f;
         if (animador != null)
         {

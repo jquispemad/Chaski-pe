@@ -18,7 +18,11 @@ con animaciones y simulación de ropa.
    ```
 
 3. En Unity Hub, agregar la carpeta **ChasquiUnity** como proyecto existente.
-4. Abrir `Assets/Scenes/Nivel01_Valle.unity` y pulsar **Play**.
+4. Abrir `Assets/Scenes/Inicio/InicioChaski.unity` y pulsar **Play**.
+
+El inicio incluye portada, menú principal, historia, historieta y opciones de
+volumen. Nueva partida conduce al nivel 1 en 2.5D; su final permite continuar al
+nivel 2 en tercera persona. Los niveles 3–12 siguen en diseño.
 
 La preparación copia las fuentes Georgia de la instalación local de Windows.
 Ejecutarla **antes de abrir Unity por primera vez**. Las fuentes comerciales

@@ -8,7 +8,7 @@ public static class ConfigurarControlesChasqui
     public static void Aplicar()
     {
         var escena = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-        if (escena.path != "Assets/Scenes/Chasqui.unity")
+        if (escena.path != "Assets/Scenes/Personaje/Chasqui.unity")
             throw new System.Exception("Abre la escena Chasqui antes de configurar los controles.");
         var movimiento = Object.FindFirstObjectByType<ChasquiMovimiento>();
         if (movimiento == null)

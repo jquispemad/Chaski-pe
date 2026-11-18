@@ -1,5 +1,13 @@
 # Recursos externos
 
+## Audio del nivel 1
+
+Biblioteca CC0 en `ChasquiUnity/Assets/Audio/Nivel01`.
+Su `LEEME.md` describe los usos, las limitaciones y los créditos;
+`CATALOGO.json` identifica la fuente y el autor de cada archivo.
+Incluye Kenney, música de mart, caracola de RoofDog y ambiente de felix.blume.
+La caracola no se presenta como una grabación andina autenticada.
+
 ## Tejido de la ropa
 
 - Recurso: **Fabric030**, ambientCG, Lennart Demes.

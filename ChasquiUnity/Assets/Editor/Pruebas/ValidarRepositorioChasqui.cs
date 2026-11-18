@@ -9,7 +9,7 @@ public static class ValidarRepositorioChasqui
     public static void Ejecutar()
     {
         if(EditorApplication.isPlaying)throw new InvalidOperationException("Detenga Play antes de validar.");
-        var escena=EditorSceneManager.OpenScene("Assets/Scenes/Nivel01_Valle.unity");
+        var escena=EditorSceneManager.OpenScene("Assets/Scenes/Borradores/Nivel01_Valle.unity");
         int faltantes=0;
         foreach(var root in escena.GetRootGameObjects())
             foreach(var t in root.GetComponentsInChildren<Transform>(true))

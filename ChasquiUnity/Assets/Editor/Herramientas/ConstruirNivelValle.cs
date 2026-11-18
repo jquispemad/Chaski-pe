@@ -26,7 +26,7 @@ public static class ConstruirNivelValle
  static GameObject Cubo(string n,Vector3 p,Vector3 s,Material m,Transform padre,bool col=true){var o=GameObject.CreatePrimitive(PrimitiveType.Cube);o.name=n;o.transform.SetParent(padre,false);o.transform.position=p;o.transform.localScale=s;o.GetComponent<Renderer>().sharedMaterial=m;if(!col)UnityEngine.Object.DestroyImmediate(o.GetComponent<Collider>());return o;}
  static GameObject Malla(string n,Mesh mesh,Material mat,Transform parent,Vector3 pos,Vector3 scale,bool collision=false){var o=new GameObject(n);o.transform.SetParent(parent,false);o.transform.position=pos;o.transform.localScale=scale;o.AddComponent<MeshFilter>().sharedMesh=mesh;var rend=o.AddComponent<MeshRenderer>();rend.sharedMaterial=mat;rend.shadowCastingMode=ShadowCastingMode.On;if(collision)o.AddComponent<MeshCollider>().sharedMesh=mesh;return o;}
  static void Texto(string n,string contenido,Vector3 p,float escala,Transform padre){var o=new GameObject(n);o.transform.SetParent(padre,false);o.transform.position=p;var t=o.AddComponent<TextMesh>();t.text=contenido;t.fontSize=64;t.characterSize=escala;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1,.91f,.68f);o.transform.rotation=Quaternion.identity;}
- [MenuItem("Chasqui/Construir nivel 1 - Valle completo")]
+ [MenuItem("Chasqui/Construir borrador del Valle")]
  public static void Crear(){
  if(EditorApplication.isPlaying)throw new Exception("Sal de Play para construir el nivel");
  Directory.CreateDirectory(D);AssetDatabase.Refresh();azar=new System.Random(7319);
@@ -46,7 +46,7 @@ public static class ConstruirNivelValle
  var meta=new GameObject("Destino · Entrega en el tambo");meta.transform.SetParent(camino);meta.transform.position=Punto(Ruta(318),318);gestor.llegada=meta.transform;
  Portada(meta.transform.position,"TAMBO DEL VALLE",false);Portada(Punto(Ruta(23),23),"QHAPAQ NAN",true);
  foreach(var r in UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)){r.receiveShadows=true;}
- EditorSceneManager.MarkSceneDirty(escena);EditorSceneManager.SaveScene(escena,"Assets/Scenes/Nivel01_Valle.unity");EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene("Assets/Scenes/Nivel01_Valle.unity",true),new EditorBuildSettingsScene("Assets/Scenes/Chasqui.unity",true)};AssetDatabase.SaveAssets();
+ EditorSceneManager.MarkSceneDirty(escena);EditorSceneManager.SaveScene(escena,"Assets/Scenes/Borradores/Nivel01_Valle.unity");AssetDatabase.SaveAssets();
  EditorUtility.DisplayProgressBar("Valle del Chasqui","Renderizando vistas del nivel",.94f);
  Vista("valle_inicio",player.transform.position+new Vector3(12,8,-13),Punto(Ruta(44),44)+Vector3.up*2,60);
  Vista("valle_puente",new Vector3(Ruta(164)+22,17,144),new Vector3(Ruta(164),3.5f,167),59);
@@ -98,7 +98,3 @@ public static class ConstruirNivelValle
  static Transform Quipu(float z,float off){Vector3 p=Punto(Ruta(z)+off,z)+Vector3.up*1.25f;var root=new GameObject("Quipu · recuerdo").transform;root.SetParent(camino);root.position=p;var g=new Geo();Tubo(g,new Vector3(-.3f,.2f,0),new Vector3(.3f,.2f,0),.045f,.045f);for(int i=0;i<5;i++){float x=-.24f+i*.12f;Tubo(g,new Vector3(x,.2f,0),new Vector3(x,-.35f+Mathf.Abs(i-2)*.06f,0),.025f,.025f);for(int k=0;k<2;k++)Tubo(g,new Vector3(x-.03f,-.07f-k*.1f,0),new Vector3(x+.03f,-.04f-k*.1f,0),.045f,.045f);}var mesh=Asset(g.Mesh("Quipu tejido"),"Quipu"+z+".asset");var o=Malla("Nudos dorados",mesh,oro,root,Vector3.zero,Vector3.one);o.transform.localPosition=Vector3.zero;return root;}
  static void Vista(string nombre,Vector3 pos,Vector3 objetivo,float fov){var o=new GameObject("Camara temporal");var c=o.AddComponent<Camera>();c.transform.position=pos;c.transform.LookAt(objetivo);c.fieldOfView=fov;c.farClipPlane=650;c.allowHDR=true;var rt=RenderTexture.GetTemporary(1440,900,24);var prev=RenderTexture.active;var tex=new Texture2D(1440,900,TextureFormat.RGB24,false);try{c.targetTexture=rt;c.Render();RenderTexture.active=rt;tex.ReadPixels(new Rect(0,0,1440,900),0,0);tex.Apply();File.WriteAllBytes(Path.Combine(Path.GetTempPath(),"chasqui_"+nombre+".png"),tex.EncodeToPNG());}finally{RenderTexture.active=prev;RenderTexture.ReleaseTemporary(rt);UnityEngine.Object.DestroyImmediate(tex);UnityEngine.Object.DestroyImmediate(o);}}
 }
-
-
-
-

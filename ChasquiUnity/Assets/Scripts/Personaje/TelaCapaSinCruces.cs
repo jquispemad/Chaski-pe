@@ -14,6 +14,9 @@ public sealed class TelaCapaSinCruces : MonoBehaviour
     struct Enlace {public int a,b;public float largo,rigidez;}
     readonly List<Enlace> enlaces=new List<Enlace>();
     readonly Dictionary<Vector2Int,float> espalda=new Dictionary<Vector2Int,float>();
+    readonly Dictionary<Vector2Int,float> contactoEspalda=new Dictionary<Vector2Int,float>();
+    readonly List<Vector3> verticesTunica=new List<Vector3>();
+    readonly List<Vector3> verticesCapa=new List<Vector3>();
     SkinnedMeshRenderer origen;Mesh horneada,malla;Transform marco,salida;
     Vector3[] puntos,antes,objetivos,locales;float[] libre;int[] superficie;
     Vector3 ultima;Matrix4x4 marcoAnterior;float[] largoAnclaje;bool listo;
@@ -49,7 +52,9 @@ public sealed class TelaCapaSinCruces : MonoBehaviour
     void LateUpdate()
     {
         if(!listo)return;
-        float dt=Mathf.Clamp(Time.deltaTime,.001f,.0333f);origen.BakeMesh(horneada);var basePose=horneada.vertices;
+        float dt=Mathf.Clamp(Time.deltaTime,.001f,.0333f);
+        origen.BakeMesh(horneada);
+        horneada.GetVertices(verticesCapa);
         Vector3 traslado=transform.position-ultima;ultima=transform.position;
         bool teleport=traslado.magnitude>2;
         apertura=Mathf.Lerp(apertura,Mathf.Clamp01(capa.Rapidez/4.8f),1-Mathf.Exp(-dt*3.5f));
@@ -57,7 +62,8 @@ public sealed class TelaCapaSinCruces : MonoBehaviour
         ConstruirEspalda();
         for(int i=0;i<puntos.Length;i++)
         {
-            basePose[i].x*=1.16f;objetivos[i]=origen.transform.TransformPoint(basePose[i]);
+            var basePose=verticesCapa[i];
+            basePose.x*=1.16f;objetivos[i]=origen.transform.TransformPoint(basePose);
             if(libre[i]==0){var q=marco.InverseTransformPoint(objetivos[i]);if(Limite(q,out float z)){q.z=Mathf.Min(q.z,z);objetivos[i]=marco.TransformPoint(q);}}
             puntos[i]=transporte.MultiplyPoint3x4(puntos[i]);antes[i]=transporte.MultiplyPoint3x4(antes[i]);
             if(teleport){puntos[i]=antes[i]=objetivos[i];}
@@ -110,6 +116,9 @@ public sealed class TelaCapaSinCruces : MonoBehaviour
         Penetraciones=0;
         for(int i=0;i<puntos.Length;i++)
         {
+            var desviacion = (puntos[i]-objetivos[i]).sqrMagnitude;
+            if (float.IsNaN(desviacion) || desviacion > 2.25f)
+                puntos[i]=antes[i]=objetivos[i];
             if(libre[i]>0){var q=marco.InverseTransformPoint(puntos[i]);if(Limite(q,out float z)&&q.z>z+.002f)Penetraciones++;}
             locales[i]=salida.InverseTransformPoint(puntos[i]);
         }
@@ -117,21 +126,30 @@ public sealed class TelaCapaSinCruces : MonoBehaviour
     }
     void ConstruirEspalda()
     {
-        espalda.Clear();var v=ropa.salida.sharedMesh.vertices;var t=ropa.salida.transform;
+        espalda.Clear();
+        contactoEspalda.Clear();
+        ropa.salida.sharedMesh.GetVertices(verticesTunica);
+        var aMarco = marco.worldToLocalMatrix * ropa.salida.transform.localToWorldMatrix;
         foreach(int i in superficie)
         {
-            Vector3 q=marco.InverseTransformPoint(t.TransformPoint(v[i]));
+            Vector3 q=aMarco.MultiplyPoint3x4(verticesTunica[i]);
             if(q.y<.40f||q.y>1.58f)continue;
             var key=new Vector2Int(Mathf.RoundToInt(q.x/Celda),Mathf.RoundToInt(q.y/Celda));
             if(!espalda.TryGetValue(key,out float z)||q.z<z)espalda[key]=q.z;
         }
+        foreach(var celda in espalda)
+            for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++)
+            {
+                var destino=celda.Key+new Vector2Int(x,y);
+                float limite=celda.Value-separacion;
+                if(!contactoEspalda.TryGetValue(destino,out float anteriorZ) || limite<anteriorZ)
+                    contactoEspalda[destino]=limite;
+            }
     }
     bool Limite(Vector3 q,out float limite)
     {
-        limite=float.PositiveInfinity;var key=new Vector2Int(Mathf.RoundToInt(q.x/Celda),Mathf.RoundToInt(q.y/Celda));bool encontro=false;
-        for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++)
-            if(espalda.TryGetValue(key+new Vector2Int(x,y),out float z)){limite=Mathf.Min(limite,z-separacion);encontro=true;}
-        return encontro;
+        var key=new Vector2Int(Mathf.RoundToInt(q.x/Celda),Mathf.RoundToInt(q.y/Celda));
+        return contactoEspalda.TryGetValue(key,out limite);
     }
     void Contacto(int i)
     {

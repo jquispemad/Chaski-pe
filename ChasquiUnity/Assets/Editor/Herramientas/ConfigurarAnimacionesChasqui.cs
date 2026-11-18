@@ -14,7 +14,7 @@ public static class ConfigurarAnimacionesChasqui
     public static void Aplicar()
     {
         if (EditorApplication.isPlaying) throw new Exception("Sal de Play para instalar las animaciones.");
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().path != "Assets/Scenes/Chasqui.unity")
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().path != "Assets/Scenes/Personaje/Chasqui.unity")
             throw new Exception("Abre la escena Chasqui.");
         if (UnityEngine.Object.FindFirstObjectByType<ChasquiMovimiento>() == null) ConfigurarControlesChasqui.Aplicar();
         string modelPath = Folder + "/ChasquiAnimado.fbx";
