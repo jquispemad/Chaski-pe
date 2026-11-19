@@ -34,7 +34,7 @@ static class CrearInicioJuegoChaski
             new GameObject("Inicio · portada, menú e historieta").AddComponent<InicioJuegoChaski>();
             EditorSceneManager.SaveScene(escena,Ruta);if(anterior.IsValid())SceneManager.SetActiveScene(anterior);
         }
-        else if(cerrar)escena=EditorSceneManager.OpenScene(Ruta,OpenSceneMode.Additive);
+        else if(cerrar){if(EditorApplication.isPlayingOrWillChangePlaymode)return;escena=EditorSceneManager.OpenScene(Ruta,OpenSceneMode.Additive);}
         var inicio=escena.GetRootGameObjects().Select(o=>o.GetComponent<InicioJuegoChaski>()).First(c=>c!=null);
         inicio.portada=AssetDatabase.LoadAssetAtPath<Texture2D>(carpeta+"Portada.png");
         inicio.menu=AssetDatabase.LoadAssetAtPath<Texture2D>(carpeta+"MenuGenerado.png");

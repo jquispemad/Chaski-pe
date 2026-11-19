@@ -14,6 +14,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Campana/Nivel02_PrimerRecorrido.unity
     guid: bee6129964a7ea845852f764a65fe724
+  - enabled: 1
+    path: Assets/Scenes/Campana/Nivel03_ValleVientos.unity
+    guid: adf23ab4a6e2461498c9873a6d3abe9d
+  - enabled: 1
+    path: Assets/Scenes/Campana/Nivel04_PuenteAbismo.unity
+    guid: 79ae111d23d8cf94bb5f6846c6102e7b
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
   m_UseUCBPForAssetBundles: 0

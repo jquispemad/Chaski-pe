@@ -13,6 +13,7 @@ public sealed class CamaraChasqui : MonoBehaviour
     [SerializeField] float inclinacionMaxima = 65f;
     Vector3 velocidad;
     float giro, inclinacion, radio;
+    float ultimoClick=float.NegativeInfinity;
     readonly RaycastHit[] contactos = new RaycastHit[24];
     public float Giro => giro;
     public float Inclinacion => inclinacion;
@@ -28,14 +29,25 @@ public sealed class CamaraChasqui : MonoBehaviour
     }
     void Update()
     {
+        if(Time.timeScale<=0){CapturarRaton(false);return;}
         if(Input.GetKeyDown(KeyCode.Escape)){CapturarRaton(false);return;}
         if(!RatonCapturado && Input.GetMouseButtonDown(0))
         {
             var cam=GetComponent<Camera>();
-            if(cam!=null&&cam.pixelRect.Contains(Input.mousePosition))CapturarRaton(true);
+            if(cam!=null&&cam.pixelRect.Contains(Input.mousePosition))
+            {
+                if(Time.unscaledTime-ultimoClick<=.35f){CapturarRaton(true);ultimoClick=float.NegativeInfinity;}
+                else ultimoClick=Time.unscaledTime;
+            }
             return;
         }
         if(RatonCapturado)Mirar(new Vector2(Input.GetAxisRaw("Mouse X"),Input.GetAxisRaw("Mouse Y")));
+    }
+    public void RestaurarOrientacion(float horizontal,float vertical)
+    {
+        giro=horizontal;inclinacion=Mathf.Clamp(vertical,inclinacionMinima,inclinacionMaxima);velocidad=Vector3.zero;
+        transform.rotation=Quaternion.Euler(inclinacion,giro,0);
+        if(objetivo!=null)transform.position=objetivo.position+Vector3.up*alturaMirada+transform.rotation*Vector3.back*radio;
     }
     public void CapturarRaton(bool capturar){Cursor.lockState=capturar?CursorLockMode.Locked:CursorLockMode.None;Cursor.visible=!capturar;}
     public void Mirar(Vector2 delta)

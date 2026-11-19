@@ -79,7 +79,7 @@ public sealed class InicioJuegoChaski:MonoBehaviour
         var r=new Rect(36,30,480,h-60);Marco(r,"CHASKI");
         GUI.Label(new Rect(81,116,390,65),"EL ÚLTIMO MENSAJE",Estilo(23,true));
         bool continuar=PlayerPrefs.GetInt("Chaski.Campana.Iniciada",0)==1 || PlayerPrefs.GetInt("Chaski.PrimeraMisionCompletada",0)==1 || PlayerPrefs.HasKey("Chaski.Nivel02.Control");
-        if(Boton(new Rect(81,215,390,62),"Continuar",continuar))Cargar(PlayerPrefs.GetInt("Chaski.PrimeraMisionCompletada",0)==1?"Nivel02_PrimerRecorrido":"Nivel01_PrimeraMision");
+        if(Boton(new Rect(81,215,390,62),"Continuar",continuar))Cargar(PlayerPrefs.GetInt("Chaski.Nivel03.Completado",0)==1?"Nivel04_PuenteAbismo":PlayerPrefs.GetInt("Chaski.Nivel02.Completado",0)==1?"Nivel03_ValleVientos":PlayerPrefs.GetInt("Chaski.PrimeraMisionCompletada",0)==1?"Nivel02_PrimerRecorrido":"Nivel01_PrimeraMision");
         if(Boton(new Rect(81,291,390,62),"Nueva partida")){comenzar=true;pagina=0;pantalla=3;}
         if(Boton(new Rect(81,367,390,62),"Historia"))pantalla=2;
         if(Boton(new Rect(81,443,390,62),"Historieta")){comenzar=false;pagina=0;pantalla=3;}
@@ -122,6 +122,10 @@ public sealed class InicioJuegoChaski:MonoBehaviour
     void Avanzar(){if(pagina<2)pagina++;else if(comenzar)Nueva();else pantalla=1;}
     void Nueva()
     {
+        PlayerPrefs.DeleteKey("Chaski.Enlace34.Pendiente");
+        foreach(string k in new[]{"Control","Completado","Registro","Inventario","ChuspaPreparada","ControlRes","Resistencia","Coca","EntradaRes","EntradaCoca","Racion0","Racion1","Racion2","Racion3","EntradaRacion0","EntradaRacion1","EntradaRacion2","EntradaRacion3","Recogido.cancha-mirador","Recogido.agua-estribo","Recogido.charki-orilla","Recogido.agua-montana","Recogido.charki-montana"})PlayerPrefs.DeleteKey("Chaski.Nivel04."+k);
+        foreach(string k in new[]{"Resistencia","Coca","Racion0","Racion1","Racion2","Racion3"})PlayerPrefs.DeleteKey("Chaski.Campana."+k);
+        foreach(string clave in new[]{"Control","Completado","Registro","Resistencia","Coca","Racion0","Racion1","Racion2","Racion3","Recogido.cancha-ladera","Recogido.cancha-refugio","Recogido.agua-refugio","Recogido.charki-desvio","Recogido.coca-ladera","Recogido.agua-tramo-medio","Recogido.charki-sendero","Recogido.cancha-tramo-final"})PlayerPrefs.DeleteKey("Chaski.Nivel03."+clave);
         foreach(string clave in new[]{"Chaski.PrimeraMisionCompletada","Chaski.Nivel02.Control","Chaski.Nivel02.X","Chaski.Nivel02.Y","Chaski.Nivel02.Z","Chaski.Nivel02.Completado","Chaski.Nivel02.Registro"})PlayerPrefs.DeleteKey(clave);
         PlayerPrefs.SetInt("Chaski.Campana.Iniciada",1);PlayerPrefs.Save();Cargar("Nivel01_PrimeraMision");
     }

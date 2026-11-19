@@ -19,6 +19,11 @@ public sealed class ChasquiMovimiento : MonoBehaviour
     public Transform camara;
     public Animator animador;
     public bool recorridoLateral;
+    [System.NonSerialized] public bool limitarCarrera;
+    [System.NonSerialized] public Vector3 empujeExterior;
+    [System.NonSerialized] public float factorVelocidad=1;
+    [System.NonSerialized] public bool reaparecerAutomaticamente=true;
+    public event System.Action SaltoIniciado;
 
     CharacterController cuerpo;
     Vector3 velocidadHorizontal;
@@ -69,8 +74,8 @@ public sealed class ChasquiMovimiento : MonoBehaviour
         if (entrada.sqrMagnitude > .001f) tiempoEnMovimiento += dt;
         else tiempoEnMovimiento = 0f;
         bool bajo=agacharse!=null&&(agacharse.Agachado||agacharse.Factor>.1f);if(bajo)saltar=false;
-        bool carreraActiva = !recorridoLateral && !bajo && (correr || tiempoEnMovimiento >= duracionPasoBreve);
-        velocidadHorizontal = Vector3.MoveTowards(velocidadHorizontal, direccion * (bajo ? 1.35f : carreraActiva ? velocidadCorrer : velocidad), aceleracion * dt);
+        bool carreraActiva = !recorridoLateral && !bajo && !limitarCarrera && (correr || tiempoEnMovimiento >= duracionPasoBreve);
+        velocidadHorizontal = Vector3.MoveTowards(velocidadHorizontal, direccion * (bajo ? 1.35f : carreraActiva ? velocidadCorrer : velocidad)*factorVelocidad, aceleracion * dt);
 
         if (cuerpo.isGrounded && velocidadVertical <= 0f)
         {
@@ -86,7 +91,8 @@ public sealed class ChasquiMovimiento : MonoBehaviour
         }
         if(preparacion >= 0f) { preparacion -= dt; if(preparacion <= 0f){preparacion=-1f;velocidadVertical=Mathf.Sqrt(alturaSalto * -2f * gravedad);saltoIniciado=true;if(saltoVisual!=null)saltoVisual.Despegar();} }
         velocidadVertical += gravedad * dt;
-        CollisionFlags contacto = cuerpo.Move((velocidadHorizontal + Vector3.up * velocidadVertical) * dt);
+        if(saltoIniciado)SaltoIniciado?.Invoke();
+        CollisionFlags contacto = cuerpo.Move((velocidadHorizontal + empujeExterior + Vector3.up * velocidadVertical) * dt);
         if (recorridoLateral && transform.position.x != ejeSendero)
         {
             // CharacterController can slide sideways when it hits an angled surface.
@@ -105,7 +111,7 @@ public sealed class ChasquiMovimiento : MonoBehaviour
         if (visual != null && direccion.sqrMagnitude > .001f)
             visual.rotation = Quaternion.Slerp(visual.rotation, Quaternion.LookRotation(direccion, Vector3.up), 1f - Mathf.Exp(-giro * dt));
 
-        if (transform.position.y < -15f)
+        if (reaparecerAutomaticamente && transform.position.y < -15f)
         {
             cuerpo.enabled = false;
             transform.position = inicio + Vector3.up * .1f;

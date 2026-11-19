@@ -19,7 +19,9 @@ public sealed class AudioPrimeraMision : MonoBehaviour
     void Start()
     {
         var primera = GetComponent<PrimeraMisionChaski>();
-        jugador = primera != null ? primera.jugador : GetComponent<SegundaMisionChaski>().jugador;
+        var segunda=GetComponent<SegundaMisionChaski>();
+        var tercera=GetComponent<NivelTresChaski>();
+        jugador = primera != null ? primera.jugador : segunda!=null?segunda.jugador:tercera!=null?tercera.jugador:GetComponent<NivelCuatroChaski>().jugador;
         cuerpo = jugador.GetComponent<CharacterController>();
         agacharse = jugador.GetComponent<AgacharseChasqui>();
         anterior = jugador.transform.position;
@@ -110,6 +112,7 @@ public sealed class AudioPrimeraMision : MonoBehaviour
             Vector3.down, out var hit, 1.2f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
         {
             string nombre = hit.collider.name.ToLowerInvariant();
+            if(nombre.Contains("ichu")&&GetComponent<NivelCuatroChaski>()!=null)return tela;
             if (nombre.Contains("piedra") || nombre.Contains("roca") || nombre.Contains("montón")) return pasosPiedra;
             if (nombre.Contains("puente") || nombre.Contains("tablón")) return pasosMadera;
         }
@@ -123,14 +126,14 @@ public sealed class AudioPrimeraMision : MonoBehaviour
         fuente.PlayOneShot(clips[Random.Range(0, clips.Length)], volumen);
     }
 
-    public void Completar()
+    public void Completar(bool sonarPututu=true)
     {
         if (terminado || efectos == null) return;
         terminado = true;
         StartCoroutine(BajarFondoAlTerminar());
         Reproducir(quipu, ropa, .9f);
         efectos.pitch = 1;
-        if (pututu != null) efectos.PlayOneShot(pututu, .75f);
+        if (sonarPututu && pututu != null) efectos.PlayOneShot(pututu, .75f);
         if (abrirPanel != null) ropa.PlayOneShot(abrirPanel, .4f);
     }
 

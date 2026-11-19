@@ -5,6 +5,7 @@ public sealed class CapaFisicaChasqui : MonoBehaviour
 {
     public Cloth tela;
     public Transform marco;
+    [System.NonSerialized] public Vector3 vientoAmbiente;
     Vector3 anterior,velocidad;
     bool listo;
     public float Rapidez {get;private set;}
@@ -22,7 +23,7 @@ public sealed class CapaFisicaChasqui : MonoBehaviour
         Rapidez=Vector3.ProjectOnPlane(velocidad,Vector3.up).magnitude;
         float rafaga=Mathf.Sin(Time.time*2.3f)*.45f+Mathf.Sin(Time.time*4.7f)*.18f;
         Vector3 arrastre=-Vector3.ProjectOnPlane(velocidad,Vector3.up)*(.45f+Rapidez*.65f);
-        tela.externalAcceleration=arrastre+marco.right*rafaga+Vector3.up*(Mathf.Clamp01(Rapidez/4.8f)*2.0f);
+        tela.externalAcceleration=arrastre+marco.right*rafaga+Vector3.up*(Mathf.Clamp01(Rapidez/4.8f)*2.0f)+vientoAmbiente;
         tela.randomAcceleration=new Vector3(.35f,.45f,.35f)*(1+Rapidez*.2f);
     }
 }

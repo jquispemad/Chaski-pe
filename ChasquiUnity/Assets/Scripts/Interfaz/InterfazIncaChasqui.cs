@@ -59,7 +59,7 @@ public sealed class InterfazIncaChasqui : MonoBehaviour
             GUI.Label(new Rect(r.x+79,r.y+17,r.width-101,38),nivel.AvisoActual,texto);
         }
         else if(Cursor.lockState!=CursorLockMode.Locked)
-            GUI.Label(new Rect(w*.5f-220,h-92,440,26),"Haz clic en el juego para mirar con el ratón",pequeno);
+            GUI.Label(new Rect(w*.5f-220,h-92,440,26),"Doble clic en el juego para mirar con el ratón",pequeno);
     }
     void OnGUI()
     {
