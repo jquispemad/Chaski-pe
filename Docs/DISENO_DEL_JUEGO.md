@@ -685,9 +685,175 @@ Agrupar fibras y rocas lejanas, reutilizar materiales y limitar sombras pequeña
 
 ### NIVEL 5 — La montaña sagrada
 
-**Escenario:** Montañas elevadas, caminos de piedra y zonas frías.
+**Estado:** diseño detallado pendiente de implementación en Unity. Este apartado no significa que exista todavía una escena jugable del nivel 5.
 
-Wayra debe subir una montaña enfrentando agotamiento, poca visibilidad y bajas temperaturas. El jugador administra su resistencia y los recursos de su chuspa. Al llegar al tambo encuentra a un viajero herido, quien advierte que algunas postas están siendo atacadas.
+**Escena prevista:** `Assets/Scenes/Campana/Nivel05_MontanaSagrada.unity`.
+**Modalidad:** 3D en tercera persona, con seguimiento y giro de cámara mediante ratón.
+**Duración objetivo:** 5–7 minutos en una primera partida, incluidos observación y encuentro final. Medir jugando; no conseguir esa duración con esperas obligatorias.
+**Recorrido orientativo:** unos 450 metros de sendero ascendente con curvas. Las distancias de los tramos se miden sobre el camino, no desde la cámara ni en línea recta hasta el destino.
+**Objetivo principal:** seguir el rastro del corredor y alcanzar el tambo de la ladera alta.
+**Objetivo final:** hablar con un viajero herido que aporta una pista sobre las postas.
+**Diferencia respecto al nivel 4:** ascenso entre roca, ichu y niebla, un paso afectado por un desprendimiento y un encuentro humano. No repetir otro gran puente ni otra entrega de quipu.
+
+#### Enlace exacto con el final del nivel 4
+
+Wayra comienza en la misma explanada de las pertenencias abandonadas: chuspa, sandalia, tejido, roca de abrigo y sendero que gira hacia la montaña. Mantener su posición relativa, orientación, cámara, resistencia, provisiones y efecto de coca restante. El puente queda detrás, a la distancia que corresponde.
+
+Compartir la zona de enlace mediante un prefab o subescena. No reconstruir una versión parecida con objetos desplazados. Las pertenencias ya examinadas permanecen allí y no vuelven a otorgar progreso ni recursos.
+
+El nivel comienza con control del jugador. No repetir la animación de examen ni una presentación desde el inicio del puente. Una frase breve acompaña los primeros pasos: «El rastro sigue hacia arriba. Tal vez alguien lo haya visto».
+
+No colocar comida junto al punto de aparición: el primer suministro está a unos 85 m. Si llega con resistencia baja, puede caminar hasta él; ninguna subida inicial exige correr o encadenar saltos.
+
+#### Relato y límites de la información
+
+Las pertenencias del nivel anterior son una pista, no una prueba de que su dueño haya muerto. Wayra observa huellas en tierra húmeda y fibras enganchadas en una roca, pero no identifica mágicamente al corredor ni lee un mensaje escrito en el quipu.
+
+Al ascender encuentra un sendero parcialmente cubierto por piedras y una pequeña posta de abastecimiento sin encargado. Más arriba ve humo de un fogón de un tambo habitado y se aproxima. Allí un viajero herido le cuenta que oyó a hombres preguntar por los mensajeros y que algunas postas han sido atacadas.
+
+El viajero no es una copia del encargado del nivel 3 ni del personaje que entregó el mensaje en el nivel 2. Usa ropa de viaje sencilla, sin la capa y los distintivos del protagonista; está sentado con una venda de tela en la pierna. Su lesión no se representa con una animación de muerte ni con sangre exagerada.
+
+Este nivel no revela al responsable del sabotaje, no confirma el destino del relevista y no adelanta el mensaje falso del nivel 9. El nombre «La montaña sagrada» expresa el tono del lugar ficticio; no inventar el nombre de un santuario real ni presentar la trama como un episodio documentado.
+
+#### Recorrido por tramos
+
+**Tramo 1 — Las últimas pertenencias, 0–85 m; aproximadamente 0:00–0:50.** La explanada del nivel 4 enlaza con una subida suave. El sendero se vuelve de piedra y tierra, con bordes irregulares, roca expuesta y pequeños grupos de ichu. El jugador puede mirar atrás y reconocer la quebrada.
+
+Un rastro discreto cruza el suelo húmedo cerca de los 45 m. «E · Observar el rastro» reproduce una mirada breve hacia el suelo y el comentario «Alguien pasó por aquí». Es opcional y no bloquea el recorrido. No usar flechas de colores flotando ni añadir un panel que tape el camino.
+
+La primera cancha aparece hacia los 85 m, en un recipiente sobre un apoyo bajo junto al sendero. Debe verse al aproximarse y poder recogerse desde suelo firme. Registrar un control en una pequeña explanada antes del tramo expuesto.
+
+**Tramo 2 — La ladera fría, 85–170 m; aproximadamente 0:50–1:50.** El sendero asciende en dos curvas amplias. Quedan vistas de la quebrada entre la niebla, con rocas grandes integradas al terreno. Algunos peldaños bajos permiten subir caminando; dos obstáculos pequeños enseñan la diferencia entre escalón y salto.
+
+Hay una ración de agua a los 145 m. La zona de recogida está del lado interior de la ladera, sin obligar a acercarse al vacío. Las ráfagas se anuncian con sonido y movimiento de ichu antes de afectar suavemente al personaje. C permite bajar el cuerpo en los tramos expuestos; no colocar un arco para justificar agacharse.
+
+**Tramo 3 — El paso desprendido, 170–255 m; aproximadamente 1:50–3:00.** Un desprendimiento antiguo ocupa parte del sendero. Las piedras forman tres apoyos bajos y estables, con aterrizajes visibles; no un muro de rocas ni un salto imposible. El jugador alterna caminar y saltar sobre ellos, manteniendo suelo libre antes y después.
+
+Registrar un control antes del primer salto. A unos 200 m hay ch’arki en una zona segura previa al obstáculo. El personaje puede alcanzarlo caminando si llega sin resistencia.
+
+Una pequeña caída de piedras añade tensión al salir: sonido de grava y polvo tenue avisan durante al menos 2,5 segundos. Caen unas pocas piedras pequeñas en una franja señalada por el propio terreno, fuera del refugio seguro. No bloquear permanentemente la única salida ni lanzar bloques sin aviso. El evento ocurre una sola vez por partida y se restablece de forma coherente al repetir el nivel. Priorizar una secuencia controlada con colisiones sencillas frente a decenas de rigidbodies.
+
+**Tramo 4 — El abrigo de piedra, 255–330 m; aproximadamente 3:00–4:10.** El camino se ensancha junto a un pequeño abrigo abierto, sin otra entrega de mensajes. Hay coca alrededor de los 250 m, antes de entrar en la parte de viento, y cancha a los 310 m. Los recipientes descansan sobre piedras bajas, no flotan sobre el terreno.
+
+Un registro opcional explica que los caminos y sus lugares de apoyo permitían organizar los recorridos. La redacción educativa definitiva debe contrastarse con las fuentes históricas del proyecto. El abrigo protege de las ráfagas y permite abrir la chuspa, pero no recupera resistencia por sí solo.
+
+Al salir se ve el tambo alto entre nubes bajas. El tejado de ichu y una columna tenue de humo del fogón permiten reconocer el destino sin un marcador gigante.
+
+**Tramo 5 — La llegada al tambo, 330–425 m; aproximadamente 4:10–5:20.** La pendiente se suaviza. El sendero conserva un lado interior ancho y un borde exterior legible. Hay agua a los 365 m y ch’arki a los 410 m, para sostener los últimos metros y preparar el siguiente tramo de campaña.
+
+La visibilidad disminuye por momentos, pero siempre se ven unos 25–35 m de camino útil. No ocultar un salto o un precipicio tras una pared de niebla. No añadir árboles altos en pleno tramo rocoso ni cultivos sobre paredes inclinadas.
+
+En una repisa firme, a unos 20 m del tambo, aparece «E · Anunciar llegada con el pututu». La acción es opcional y usa la caracola real de la cintura: sacar, llevar a la boca, tocar y guardar en sincronía con el audio. La música baja durante el sonido. Desde el interior se oye una respuesta humana: «¡Aquí! Hay un herido».
+
+**Tramo 6 — El viajero herido, 425–450 m; aproximadamente 5:20–6:30.** Un patio pequeño con muro bajo, fogón y dos personajes termina el recorrido. La vivienda tiene paredes de piedra, cubierta de haces de ichu y cortina tejida; evitar techos con apariencia de tablones y puertas que giren sobre bisagras metálicas.
+
+Registrar el último control al entrar al patio. El viajero está sentado junto a la pared y otra persona lo atiende. Ambos tienen un espacio libre de piedras y vegetación; sus pies y asiento coinciden con el suelo.
+
+«E · Hablar con el viajero» inicia el encuentro. Wayra se aproxima hasta una marca discreta y se detiene sin atravesar al NPC. Una animación breve lo muestra inclinándose para escuchar, con manos relajadas y mirada dirigida al rostro. El quipu de la misión permanece en su poder.
+
+#### Encuentro final: texto y animación
+
+Subtítulos propuestos, en este orden:
+
+1. **Wayra:** «Encontré una chuspa de corredor abajo, junto al camino. ¿Viste pasar a un chasqui?».
+2. **Viajero:** «Vi a uno subir antes que yo. Después llegaron hombres preguntando por los mensajeros».
+3. **Wayra:** «¿Lo alcanzaron?».
+4. **Viajero:** «No lo sé. Me aparté del camino cuando los oí. Hay postas que han sido atacadas».
+5. **Persona del tambo:** «El sendero del bosque sigue abierto. Ve con cuidado; al caer la tarde cuesta ver entre las rocas».
+6. **Wayra:** «Buscaré noticias en la siguiente posta. El mensaje tiene que llegar».
+
+Cada intervención acompaña un gesto corto: respirar, levantar la mirada, señalar el camino o asentir. No mantener a los tres personajes gesticulando al mismo tiempo ni repetir un movimiento de brazo en bucle. El viajero permanece sentado y no se levanta repentinamente pese a su lesión.
+
+E avanza el texto cuando se haya mostrado completo. No necesitar una voz grabada para continuar. Si después se añaden voces, sincronizar la duración sin bloquear Esc. No añadir una animación de entrega de quipu: en este encuentro se obtiene información, no otro encargo idéntico.
+
+Tras el último diálogo, Wayra se incorpora y observa la salida del patio durante 2–3 segundos. Aparece la manta final con el título «EL RASTRO CONTINÚA» y el texto: «Un viajero vio al corredor subir hacia el bosque. Las noticias de ataques a las postas hacen más urgente el viaje».
+
+Botones ordenados con iconos legibles: **Repetir**, **Menú principal** y **Siguiente nivel**. Siguiente solo estará habilitado cuando exista `Nivel06_OjosPuma` y esté incluido en la campaña. No colocar un botón que parezca activo y no haga nada.
+
+El camino sale del patio y continúa hacia un recodo con árboles de montaña. No terminarlo de golpe detrás del viajero. El nivel 6 comenzará en ese mismo patio o su salida inmediata, conservando personajes, arquitectura, orientación e inventario.
+
+#### Resistencia y provisiones obligatorias en la ruta
+
+Conservar las reglas desde el nivel 3: máximo 100, carrera 1,5/s, salto 3; caminar no gasta. Sin recuperación gratuita al esperar, usar el refugio o volver a un control. Con resistencia agotada Wayra aún puede caminar y realizar el salto básico; evitar un bloqueo que obligue a reiniciar.
+
+- Cancha: hasta **+20** al completar 2,8 s de consumo.
+- Agua: hasta **+30** tras beber durante 3 s.
+- Ch’arki: hasta **+45** al completar 3,6 s.
+- Coca: hasta **+10** y gasto al correr reducido un 20 % durante 20 s, tras el gesto de 2,2 s. No acumular activaciones.
+
+Distribución prevista: cancha a los 85 m, agua a los 145 m, ch’arki a los 200 m, coca a los 250 m, cancha a los 310 m, agua a los 365 m y ch’arki a los 410 m. Ningún recurso está en el punto de aparición. Las siete raciones aportan hasta 200 de recuperación además de lo que ya lleve Wayra; el exceso sobre 100 se pierde, por lo que no conviene comer con la barra casi llena.
+
+Esta distribución es una propuesta de balance, no una partida validada: medir desniveles, desvíos y número real de saltos. Desde cada suministro se debe poder llegar al siguiente caminando. La dificultad está en administrar la carrera y escoger cuándo comer, no en buscar una ración invisible fuera del camino.
+
+E recoge y guarda; mantener E abre la chuspa incluso junto a un recipiente. Capacidad: cuatro canchas y dos de cada otro tipo. Mostrar el nombre del recurso y, si está lleno, explicar que puede consumir una ración. No descontar ni aplicar recuperación hasta completar el gesto; cancelar al moverse no consume el objeto.
+
+Después de comer, actualizar barra, cantidad y guardado en el mismo evento, mostrando la recuperación efectiva. Mantener el codo por fuera del torso y la mano recorriendo bolso → exterior del cuerpo → boca → bolso. Durante el gesto no aparece el puntero; al acabar se conserva el modo de cámara. Esc pausa y libera el cursor para los botones.
+
+#### Frío, viento y visibilidad
+
+En esta primera versión, el frío se representa mediante ambiente, respiración discreta, sonido y gestos. **No añadir una segunda barra de temperatura ni daño constante por frío**: todavía no existe un sistema de abrigo que permita contrarrestarlo de forma clara.
+
+Usar el viento de los niveles anteriores con fuerzas moderadas y predecibles. La capa cae cuando Wayra está quieto y responde al movimiento; no queda extendida como una tabla ni atraviesa el torso. El pelo tiene movimiento limitado. Al pasar detrás de una roca grande disminuye la exposición.
+
+La niebla deja ver el apoyo siguiente. Evitar nieve intensa, partículas sobre toda la pantalla o temblores de cámara permanentes. Agacharse reduce la exposición sin inmovilizar al jugador.
+
+#### Caídas, controles y reintentos
+
+Controles propuestos en los metros 80, 170, 260 y 425. Cada control está en una superficie ancha, antes de un peligro o al terminarlo; nunca sobre una roca pequeña ni dentro de un objeto.
+
+Caer al vacío o sufrir una caída vertical mortal muestra el panel de muerte y permite volver al último apoyo seguro. Mantener el criterio de unos seis metros de caída real a suelo firme del nivel 4; los peldaños y saltos previstos no deben activarlo.
+
+Al reintentar, no cargar el inicio de la campaña ni repetir el examen de pertenencias. Conservar resistencia actual, raciones consumidas y recursos recogidos; no generar energía gratis ni duplicar comida. Restablecer los obstáculos temporales y la cámara de forma segura. Si faltan provisiones, puede regresar caminando a una ración pendiente.
+
+Un impacto de piedra pequeño puede provocar un gesto de protección y detener brevemente la carrera, sin lanzar a Wayra al vacío mediante una fuerza exagerada. No introducir una barra de salud independiente sin diseñar antes su recuperación y comunicación.
+
+#### Escenario, cámara e interfaz
+
+Combinar roca oscura, tierra húmeda, ichu en grupos irregulares y vegetación baja. Asentar cada roca según su volumen real, con una parte enterrada; no formar filas idénticas alrededor del sendero. No añadir otro río suspendido para decorar el fondo. Si se ve agua a distancia, debe pertenecer a un cauce integrado en el relieve.
+
+El sendero mide aproximadamente 2,5–3,5 m de ancho en zonas normales y se estrecha solo donde los apoyos se leen con claridad. Colocar barreras invisibles únicamente en límites exteriores coherentes, fuera de superficies que parezcan accesibles; las caídas visibles conservan su peligro.
+
+La cámara sigue a Wayra, evita paredes y mantiene visibles los aterrizajes en subida. No girarla bruscamente en las curvas ni hacer que la niebla la coloque dentro de una roca. El minimapa representa el recorrido completo y conserva la correspondencia entre movimiento real y marcador; no invertir izquierda y derecha.
+
+Carteles junto al camino, sin árboles delante y con texto ajustado al tablero. Mantener el aspecto de madera tallada y las fuentes tradicionales legibles del proyecto. Los subtítulos usan un panel discreto separado de las ayudas de interacción. Mostrar objetivo, resistencia, chuspa y minimapa sin cubrir el centro de los saltos.
+
+#### Audio y animaciones necesarias
+
+Pasos diferenciados para tierra, piedra y vegetación baja; sonido de aterrizaje proporcional a la caída, roce de tela suave, viento por exposición y grava para el desprendimiento. Sin golpes de piedra en todos los pasos ni sonidos de salto exagerados.
+
+La música acompaña el ascenso con volumen bajo. Durante el pututu se atenúa y vuelve suavemente; en el diálogo final baja para permitir leer o escuchar, y con la manta queda aproximadamente a la mitad del nivel de fondo que tenía al jugar.
+
+Reutilizar correr, caminar, salto, agacharse, consumo y pututu. Añadir mirada al rastro, reacción breve a grava, gesto de protección, conversación con personaje sentado y cierre mirando hacia el bosque. No anunciar como terminadas voces o animaciones que todavía no se hayan creado.
+
+#### Organización prevista en Unity
+
+Guardar la escena de campaña en `Assets/Scenes/Campana/`. Separar sus recursos en `Assets/Niveles/MontanaSagrada/`, con terreno, mallas, materiales y prefabs propios. Reutilizar los recursos compartidos del personaje, interfaz, alimentos, casas y sonido sin duplicarlos para cada nivel.
+
+Agrupar el contenido de la escena en: enlace con nivel 4, terreno y sendero, vegetación y rocas, obstáculos, provisiones, controles, tambo final, personajes, audio y cámaras. Los elementos visibles, los colliders y los puntos de interacción deben conservar referencias explícitas.
+
+Un controlador `NivelCincoChaski` gestionará avance, recursos, encuentro y cierre. El inventario y sus efectos deberían pasar a un componente común para evitar que un nivel recupere resistencia de otra forma. Separar el evento de desprendimiento del guardado de campaña.
+
+El enlace 4 → 5 debe guardar la finalización antes de cambiar de escena. Repetir nivel restaura su estado inicial; reintentar tras morir restaura solo la posición segura. Nueva partida limpia los estados del nivel 5. Continuar reconoce el nivel más avanzado realmente disponible.
+
+#### Rendimiento y comprobaciones de aceptación
+
+Agrupar ichu y rocas lejanas, reutilizar materiales, limitar sombras pequeñas y aplicar niveles de detalle donde sea útil. Pocas partículas locales y un número limitado de piedras móviles. No generar fibras individuales con colliders ni añadir simulaciones costosas a cada adorno.
+
+1. El inicio coincide con el final del nivel 4 y conserva cámara, posición relativa, raciones y resistencia.
+2. No se repite el examen de las pertenencias ni otra entrega de quipu.
+3. Las siete provisiones se ven y alcanzan desde el sendero; no hay comida junto al inicio.
+4. Cada alimento recupera lo indicado una sola vez al terminar y actualiza barra, inventario y guardado.
+5. Esperar, refugiarse y volver a un control no generan resistencia.
+6. El recorrido es transitable con resistencia baja; ninguna sección exige una carrera imposible de recuperar.
+7. Rocas y apoyos no flotan; los pies coinciden con las superficies al caminar y aterrizar.
+8. El desprendimiento avisa, deja una zona segura y no bloquea la única salida.
+9. Las caídas previstas regresan al control anterior sin reproducir la introducción.
+10. Consumo y pututu no atraviesan cuerpo o ropa; el cursor solo aparece cuando corresponde a una interfaz.
+11. Esc pausa también diálogos, partículas de evento y animaciones; los botones admiten clic.
+12. El encuentro final tiene encuadre, gestos y subtítulos legibles; el viajero conserva su postura de herido.
+13. La manta final muestra opciones coherentes y deshabilita el nivel 6 mientras no exista.
+14. El sendero continúa visualmente hacia el bosque y permite enlazar el siguiente mapa.
+15. Medir duración, rendimiento y consola en la computadora del proyecto antes de declarar terminada la implementación.
 
 ### NIVEL 6 — Los ojos del puma
 

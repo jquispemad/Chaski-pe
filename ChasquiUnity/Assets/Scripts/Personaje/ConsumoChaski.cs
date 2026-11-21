@@ -14,7 +14,7 @@ public sealed class ConsumoChaski:MonoBehaviour
         cabeza=ts.FirstOrDefault(t=>t.name=="head");pecho=ts.FirstOrDefault(t=>t.name=="chest");marcoBolso=null;
         foreach(var piel in GetComponentsInChildren<SkinnedMeshRenderer>())
         {
-            if(piel.sharedMesh==null||piel.sharedMesh.subMeshCount<=13)continue;var indices=piel.sharedMesh.GetTriangles(13);if(indices.Length==0)continue;
+            if(piel.sharedMesh==null||!piel.sharedMesh.isReadable||piel.sharedMesh.subMeshCount<=13)continue;var indices=piel.sharedMesh.GetTriangles(13);if(indices.Length==0)continue;
             captura=new Mesh();piel.BakeMesh(captura);var vertices=captura.vertices;var candidatos=indices.Where(i=>piel.transform.TransformPoint(vertices[i]).y<transform.position.y+1.05f).ToArray();if(candidatos.Length==0)candidatos=indices;var limites=new Bounds(vertices[candidatos[0]],Vector3.zero);foreach(var i in candidatos)limites.Encapsulate(vertices[i]);
             marcoBolso=piel.transform;aperturaLocal=new Vector3(limites.center.x,limites.max.y-.025f,limites.center.z);Destroy(captura);captura=null;break;
         }

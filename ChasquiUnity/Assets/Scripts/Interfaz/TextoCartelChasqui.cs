@@ -3,7 +3,7 @@ using UnityEngine;
 public sealed class TextoCartelChasqui : MonoBehaviour
 {
  bool ajustar=true;Renderer tabla;Renderer letras;
- void OnEnable(){Font.textureRebuilt+=Actualizar;Actualizar(GetComponent<TextMesh>().font);ajustar=true;}
+ void OnEnable(){var t=GetComponent<TextMesh>();t.font=FuenteCastellanaChaski.Obtener();GetComponent<MeshRenderer>().sharedMaterial=t.font.material;Font.textureRebuilt+=Actualizar;Actualizar(t.font);ajustar=true;}
  void OnDisable(){Font.textureRebuilt-=Actualizar;}
  void Actualizar(Font f){var t=GetComponent<TextMesh>();if(f==null||f!=t.font)return;var r=GetComponent<MeshRenderer>();if(r.sharedMaterial!=null)r.sharedMaterial.mainTexture=f.material.mainTexture;ajustar=true;}
  void LateUpdate()

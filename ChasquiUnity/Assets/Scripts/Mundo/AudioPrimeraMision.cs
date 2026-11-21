@@ -21,7 +21,7 @@ public sealed class AudioPrimeraMision : MonoBehaviour
         var primera = GetComponent<PrimeraMisionChaski>();
         var segunda=GetComponent<SegundaMisionChaski>();
         var tercera=GetComponent<NivelTresChaski>();
-        jugador = primera != null ? primera.jugador : segunda!=null?segunda.jugador:tercera!=null?tercera.jugador:GetComponent<NivelCuatroChaski>().jugador;
+        jugador = primera != null ? primera.jugador : segunda!=null?segunda.jugador:tercera!=null?tercera.jugador:GetComponent<NivelCincoChaski>()!=null?GetComponent<NivelCincoChaski>().jugador:GetComponent<NivelCuatroChaski>().jugador;
         cuerpo = jugador.GetComponent<CharacterController>();
         agacharse = jugador.GetComponent<AgacharseChasqui>();
         anterior = jugador.transform.position;

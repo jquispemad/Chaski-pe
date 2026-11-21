@@ -79,7 +79,7 @@ public sealed class InicioJuegoChaski:MonoBehaviour
         var r=new Rect(36,30,480,h-60);Marco(r,"CHASKI");
         GUI.Label(new Rect(81,116,390,65),"EL ÚLTIMO MENSAJE",Estilo(23,true));
         bool continuar=PlayerPrefs.GetInt("Chaski.Campana.Iniciada",0)==1 || PlayerPrefs.GetInt("Chaski.PrimeraMisionCompletada",0)==1 || PlayerPrefs.HasKey("Chaski.Nivel02.Control");
-        if(Boton(new Rect(81,215,390,62),"Continuar",continuar))Cargar(PlayerPrefs.GetInt("Chaski.Nivel03.Completado",0)==1?"Nivel04_PuenteAbismo":PlayerPrefs.GetInt("Chaski.Nivel02.Completado",0)==1?"Nivel03_ValleVientos":PlayerPrefs.GetInt("Chaski.PrimeraMisionCompletada",0)==1?"Nivel02_PrimerRecorrido":"Nivel01_PrimeraMision");
+        if(Boton(new Rect(81,215,390,62),"Continuar",continuar))Cargar(PlayerPrefs.GetInt("Chaski.Nivel04.Completado",0)==1&&Application.CanStreamedLevelBeLoaded("Nivel05_MontanaSagrada")?"Nivel05_MontanaSagrada":PlayerPrefs.GetInt("Chaski.Nivel03.Completado",0)==1?"Nivel04_PuenteAbismo":PlayerPrefs.GetInt("Chaski.Nivel02.Completado",0)==1?"Nivel03_ValleVientos":PlayerPrefs.GetInt("Chaski.PrimeraMisionCompletada",0)==1?"Nivel02_PrimerRecorrido":"Nivel01_PrimeraMision");
         if(Boton(new Rect(81,291,390,62),"Nueva partida")){comenzar=true;pagina=0;pantalla=3;}
         if(Boton(new Rect(81,367,390,62),"Historia"))pantalla=2;
         if(Boton(new Rect(81,443,390,62),"Historieta")){comenzar=false;pagina=0;pantalla=3;}

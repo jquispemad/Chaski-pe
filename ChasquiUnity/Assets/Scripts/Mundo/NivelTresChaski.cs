@@ -62,7 +62,7 @@ public sealed class NivelTresChaski:MonoBehaviour
         Time.timeScale=1;audioNivel=GetComponent<AudioPrimeraMision>();cuerpo=jugador.GetComponent<CharacterController>();bajo=jugador.GetComponent<AgacharseChasqui>();camara=vista.GetComponent<CamaraChasqui>();
         gesto=jugador.gameObject.AddComponent<ConsumoChaski>();jugador.SaltoIniciado+=GastarSalto;
         foreach(var t in jugador.GetComponentsInChildren<Transform>())if(t.name=="chest"){pechoViento=t;break;}
-        titulo=Resources.Load<Font>("EstiloInca/TituloTradicional");texto=Resources.Load<Font>("EstiloInca/TextoTradicional");manta=InterfazIncaChasqui.CrearTejido();
+        titulo=FuenteCastellanaChaski.Obtener();texto=FuenteCastellanaChaski.Obtener();manta=InterfazIncaChasqui.CrearTejido();
         circulo.gameObject.SetActive(false);puntoControl=jugador.transform.position;
         etapa=Mathf.Clamp(PlayerPrefs.GetInt(Prefijo+"Control",0),0,controles.Length);
         if(etapa>0){puntoControl=controles[etapa-1].position;intro=0;jugador.Reubicar(puntoControl);}
