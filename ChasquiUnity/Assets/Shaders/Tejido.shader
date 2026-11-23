@@ -2,8 +2,8 @@ Shader "Chasqui/Tejido dos caras" {
  Properties {_Color("Tinte natural",Color)=(.5,.3,.1,1) _MainTex("Albedo",2D)="white"{} _BumpMap("Relieve del tejido",2D)="bump"{} _BumpScale("Relieve",Range(0,2))=.5 _RoughnessMap("Rugosidad",2D)="white"{} _Glossiness("Suavidad",Range(0,1))=.16 _Metallic("Metal",Range(0,1))=0 _Fibra("Intensidad del tejido",Range(0,1))=.8}
  SubShader {Tags{"RenderType"="Opaque"} Cull Off LOD 300
  CGPROGRAM
- #pragma surface surf Standard fullforwardshadows addshadow vertex:vert
- #pragma target 3.5
+ #pragma surface surf Standard fullforwardshadows vertex:vert
+ #pragma target 3.0
  sampler2D _MainTex,_BumpMap,_RoughnessMap;fixed4 _Color;half _Glossiness,_Metallic,_Fibra,_BumpScale;
  struct Input{float2 uv_MainTex;float3 localPos;float3 worldPos;float3 worldNormal;float facing:VFACE;INTERNAL_DATA};
  void vert(inout appdata_full v,out Input o){UNITY_INITIALIZE_OUTPUT(Input,o);o.localPos=v.vertex.xyz;}

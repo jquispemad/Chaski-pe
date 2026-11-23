@@ -14,25 +14,27 @@ Shader "Chasqui/Piedra realista"
  SubShader {
  Tags {"RenderType"="Opaque"}
  CGPROGRAM
- #pragma surface surf Standard fullforwardshadows addshadow
- #pragma target 3.5
+ #pragma surface surf Standard fullforwardshadows
+ #pragma target 3.0
  fixed4 _ColorBase,_ColorOscuro,_ColorMusgo;
  float _Escala,_Detalle,_Rugosidad,_Metalico,_Musgo,_Relieve;
  struct Input {float3 worldPos;float3 worldNormal;INTERNAL_DATA};
  float hash(float3 p){p=frac(p*.1031);p+=dot(p,p.yzx+33.33);return frac((p.x+p.y)*p.z);}
  float noise3(float3 p){float3 i=floor(p),f=frac(p);f=f*f*(3-2*f);return lerp(lerp(lerp(hash(i),hash(i+float3(1,0,0)),f.x),lerp(hash(i+float3(0,1,0)),hash(i+float3(1,1,0)),f.x),f.y),lerp(lerp(hash(i+float3(0,0,1)),hash(i+float3(1,0,1)),f.x),lerp(hash(i+float3(0,1,1)),hash(i+float3(1,1,1)),f.x),f.y),f.z);}
- float fbm(float3 p){return noise3(p)*.52+noise3(p*2.13)*.26+noise3(p*4.37)*.13+noise3(p*8.7)*.065;}
+ float fbm2(float3 p){return noise3(p)*.67+noise3(p*2.13)*.33;}
  void surf(Input IN,inout SurfaceOutputStandard o){
  float3 p=IN.worldPos*_Escala;
- float macro=fbm(p*.38),grano=noise3(p*23),medio=fbm(p*2.1);
- float veta=abs(sin((p.y*.7+p.x*.22+fbm(p*.7)*2.4)*5));
+ float macro=fbm2(p*.38),medio=fbm2(p*2.1),grano=noise3(p*23);
+ float veta=abs(sin((p.y*.7+p.x*.22+(macro*1.6+medio*.8))*5));
  float fisura=1-smoothstep(.025,.10,veta);
  float mezcla=saturate((macro-.23)*1.9+(medio-.45)*.35);
  float3 color=lerp(_ColorOscuro.rgb,_ColorBase.rgb,mezcla);
  color*=lerp(.80,1.15,grano);color*=1-fisura*.45;
  float3 N=normalize(WorldNormalVector(IN,float3(0,0,1)));
- float liquen=smoothstep(.48,.68,fbm(p*1.7))*saturate(N.y)*_Musgo;
- color=lerp(color,_ColorMusgo.rgb,liquen);
+ if(_Musgo>.001 && N.y>.05){
+  float liquen=smoothstep(.48,.68,noise3(p*1.7))*saturate(N.y)*_Musgo;
+  color=lerp(color,_ColorMusgo.rgb,liquen);
+ }
  float altura=(medio*.65+grano*.075-fisura*.09)*.025*_Relieve;
  float3 dx=ddx(IN.worldPos),dy=ddy(IN.worldPos),r1=cross(dy,N),r2=cross(N,dx);
  float det=dot(dx,r1);float3 grad=sign(det)*(ddx(altura)*r1+ddy(altura)*r2);

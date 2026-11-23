@@ -43,8 +43,11 @@ public sealed class NivelCincoChaski:MonoBehaviour
     AgacharseChasqui bajo;
     CamaraChasqui camara;
     ConsumoChaski gesto;
+    CapaFisicaChasqui capaFisica;
     Transform pechoViento;
     Font titulo,texto;
+    readonly System.Collections.Generic.Dictionary<int, GUIStyle> estilosCache = new System.Collections.Generic.Dictionary<int, GUIStyle>();
+    GUIStyle botonCache;
     Texture2D manta;
     Camera mapa;RenderTexture imagenMapa;
     float siguienteMapa,quieto,coca,ultimoEsfuerzo,proximoPututu,intro=3,tiempoConsumo,mantenerE,tiempoDescanso;
@@ -60,7 +63,7 @@ public sealed class NivelCincoChaski:MonoBehaviour
     const string Prefijo="Chaski.Nivel05.";
     void Start()
     {
-        Time.timeScale=1;audioNivel=GetComponent<AudioPrimeraMision>();cuerpo=jugador.GetComponent<CharacterController>();bajo=jugador.GetComponent<AgacharseChasqui>();camara=vista.GetComponent<CamaraChasqui>();
+        Time.timeScale=1;audioNivel=GetComponent<AudioPrimeraMision>();cuerpo=jugador.GetComponent<CharacterController>();bajo=jugador.GetComponent<AgacharseChasqui>();camara=vista.GetComponent<CamaraChasqui>();capaFisica=jugador.GetComponentInChildren<CapaFisicaChasqui>();
         gesto=jugador.gameObject.AddComponent<ConsumoChaski>();jugador.SaltoIniciado+=GastarSalto;
         foreach(var t in jugador.GetComponentsInChildren<Transform>())if(t.name=="chest"){pechoViento=t;break;}
         titulo=FuenteCastellanaChaski.Obtener();texto=FuenteCastellanaChaski.Obtener();manta=InterfazIncaChasqui.CrearTejido();
@@ -188,7 +191,7 @@ public sealed class NivelCincoChaski:MonoBehaviour
         Protegido=false;
         foreach(var abrigo in abrigos)if(Mathf.Abs(p.z-abrigo.position.z)<3.2f && p.x<abrigo.position.x && p.x>abrigo.position.x-5)Protegido=true;
         Rafaga=expuesto&&!Protegido?fuerza:0;
-        var capa=jugador.GetComponentInChildren<CapaFisicaChasqui>();
+        var capa=capaFisica;
         if(capa!=null)capa.vientoAmbiente=Vector3.left*(Rafaga*5)+Vector3.up*Rafaga*.6f;
         jugador.empujeExterior=jugador.enabled?Vector3.left*(Rafaga*(bajo.Agachado?.10f:.42f)):Vector3.zero;
         if(viento!=null)viento.volume=Mathf.Lerp(.045f,.13f,expuesto&&!Protegido?fuerza:.1f);
@@ -239,9 +242,9 @@ public sealed class NivelCincoChaski:MonoBehaviour
             if(pecho!=null)pecho.rotation=Quaternion.AngleAxis(Rafaga*4,jugador.visual.forward)*pecho.rotation;
         }
     }
-    GUIStyle Estilo(int n,bool grande=false)=>new GUIStyle(GUI.skin.label){font=grande?titulo:texto,fontSize=n,wordWrap=true,normal={textColor=new Color(1,.91f,.73f)}};
+    GUIStyle Estilo(int n,bool grande=false){int key=(n<<1)|(grande?1:0);if(!estilosCache.TryGetValue(key,out var st)){st=new GUIStyle(GUI.skin.label){font=grande?titulo:texto,fontSize=n,wordWrap=true,normal={textColor=new Color(1,.91f,.73f)}};estilosCache[key]=st;}return st;}
     static void Panel(Rect r){var c=GUI.color;GUI.color=new Color(.12f,.06f,.025f,.94f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=c;}
-    bool Boton(Rect r,string t){return GUI.Button(r,t,new GUIStyle(GUI.skin.button){font=texto,fontSize=22});}
+    bool Boton(Rect r,string t){if(botonCache==null)botonCache=new GUIStyle(GUI.skin.button){font=texto,fontSize=22};return GUI.Button(r,t,botonCache);}
     void OnGUI()
     {
         var antes=GUI.matrix;float s=Mathf.Min(Screen.width/1400f,Screen.height/850f);GUI.matrix=Matrix4x4.Scale(Vector3.one*s);float w=Screen.width/s,h=Screen.height/s;

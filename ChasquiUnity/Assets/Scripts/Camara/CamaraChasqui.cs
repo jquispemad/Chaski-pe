@@ -15,12 +15,16 @@ public sealed class CamaraChasqui : MonoBehaviour
     float giro, inclinacion, radio;
     float ultimoClick=float.NegativeInfinity;
     readonly RaycastHit[] contactos = new RaycastHit[24];
+    Camera camaraCache;
+    Transform objetivoCache;
+    AgacharseChasqui bajoCache;
     public float Giro => giro;
     public float Inclinacion => inclinacion;
     public bool RatonCapturado => Cursor.lockState == CursorLockMode.Locked;
 
     void Start()
     {
+        camaraCache = GetComponent<Camera>();
         Vector3 offset=distancia-Vector3.up*alturaMirada;
         radio=Mathf.Max(2f,offset.magnitude);
         giro=Mathf.Atan2(-offset.x,-offset.z)*Mathf.Rad2Deg;
@@ -33,7 +37,7 @@ public sealed class CamaraChasqui : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Escape)){CapturarRaton(false);return;}
         if(!RatonCapturado && Input.GetMouseButtonDown(0))
         {
-            var cam=GetComponent<Camera>();
+            var cam=camaraCache != null ? camaraCache : (camaraCache = GetComponent<Camera>());
             if(cam!=null&&cam.pixelRect.Contains(Input.mousePosition))
             {
                 if(Time.unscaledTime-ultimoClick<=.35f){CapturarRaton(true);ultimoClick=float.NegativeInfinity;}
@@ -60,7 +64,8 @@ public sealed class CamaraChasqui : MonoBehaviour
     void LateUpdate()
     {
         if(objetivo==null)return;
-        var bajo=objetivo.GetComponent<AgacharseChasqui>();
+        if(objetivo!=objetivoCache){objetivoCache=objetivo;bajoCache=objetivo.GetComponent<AgacharseChasqui>();}
+        var bajo=bajoCache;
         Vector3 centro=objetivo.position+Vector3.up*(alturaMirada-(bajo!=null?bajo.Factor*.4f:0));
         Vector3 direccion=Quaternion.Euler(inclinacion,giro,0)*Vector3.back;
         float longitud=radio;

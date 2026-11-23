@@ -4,7 +4,7 @@ Shader "Chasqui/Paja agrupada de cubierta"
  SubShader {
  Tags {"RenderType"="Opaque"} Cull Off
  CGPROGRAM
- #pragma surface surf Standard fullforwardshadows addshadow
+ #pragma surface surf Standard fullforwardshadows
  #pragma target 3.0
  fixed4 _Color;
  struct Input {float3 worldPos;float3 worldNormal;};

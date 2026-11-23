@@ -22,6 +22,7 @@ public sealed class PrimeraMisionChaski : MonoBehaviour
     float proximaActualizacionMapa;
     bool pausa;
     bool movimientoAntesPausa;
+    CharacterController ccJugador;
 
     void Update()
     {
@@ -45,6 +46,7 @@ public sealed class PrimeraMisionChaski : MonoBehaviour
 
     void Start()
     {
+        ccJugador = jugador != null ? jugador.GetComponent<CharacterController>() : null;
         titulo = Resources.Load<Font>("EstiloInca/TituloTradicional");
         lectura = Resources.Load<Font>("EstiloInca/TextoTradicional");
         var posicion = vista.transform.position;
@@ -91,7 +93,7 @@ public sealed class PrimeraMisionChaski : MonoBehaviour
         if (dialogo != 0 || circuloEntrega == null) return;
         var distancia = jugador.transform.position - circuloEntrega.position;
         bool dentro = distancia.x * distancia.x + distancia.z * distancia.z <= radioEntrega * radioEntrega;
-        var velocidad = jugador.GetComponent<CharacterController>().velocity;
+        var velocidad = ccJugador != null ? ccJugador.velocity : Vector3.zero;
         quieto = dentro && jugador.EnSuelo && velocidad.sqrMagnitude < .09f && !QuiereMoverse()
             ? quieto + Time.deltaTime : 0f;
         if (quieto >= 1f)

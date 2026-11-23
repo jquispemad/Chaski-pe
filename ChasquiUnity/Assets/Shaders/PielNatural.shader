@@ -2,8 +2,8 @@ Shader "Chasqui/Piel natural" {
  Properties {_Color("Piel",Color)=(.43,.225,.125,1) _Glossiness("Suavidad",Range(0,1))=.32 _Metallic("Metal",Range(0,1))=0}
  SubShader {Tags{"RenderType"="Opaque"} LOD 300
  CGPROGRAM
- #pragma surface surf Standard fullforwardshadows addshadow vertex:vert
- #pragma target 3.5
+ #pragma surface surf Standard fullforwardshadows vertex:vert
+ #pragma target 3.0
  fixed4 _Color;half _Glossiness;
  struct Input{float3 localPos;float3 worldPos;float3 worldNormal;INTERNAL_DATA};
  void vert(inout appdata_full v,out Input o){UNITY_INITIALIZE_OUTPUT(Input,o);o.localPos=v.vertex.xyz;}

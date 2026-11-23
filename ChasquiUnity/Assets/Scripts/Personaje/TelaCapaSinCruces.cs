@@ -1,4 +1,8 @@
 using System.Collections.Generic;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Mathematics;
 using UnityEngine;
 
 // Simulate after the tunic has finished deforming, so contact follows its
@@ -8,158 +12,458 @@ public sealed class TelaCapaSinCruces : MonoBehaviour
 {
     public CapaFisicaChasqui capa;
     public RopaDinamicaChasqui ropa;
-    public float separacion=.028f;
-    public int Penetraciones {get;private set;}
+    public float separacion = .028f;
+    public int Penetraciones { get; private set; }
     public Vector3[] Vertices => locales;
-    struct Enlace {public int a,b;public float largo,rigidez;}
-    readonly List<Enlace> enlaces=new List<Enlace>();
-    readonly Dictionary<Vector2Int,float> espalda=new Dictionary<Vector2Int,float>();
-    readonly Dictionary<Vector2Int,float> contactoEspalda=new Dictionary<Vector2Int,float>();
-    readonly List<Vector3> verticesTunica=new List<Vector3>();
-    readonly List<Vector3> verticesCapa=new List<Vector3>();
-    SkinnedMeshRenderer origen;Mesh horneada,malla;Transform marco,salida;
-    Vector3[] puntos,antes,objetivos,locales;float[] libre;int[] superficie;
-    Vector3 ultima;Matrix4x4 marcoAnterior;float[] largoAnclaje;bool listo;
-    Vector2[] coordenadas;
+
+    struct Enlace
+    {
+        public int a, b;
+        public float largo, rigidez;
+    }
+
+    SkinnedMeshRenderer origen;
+    Mesh horneada, malla;
+    Transform marco, salida;
+    Vector3[] locales;
+    Vector3 ultima;
+    Matrix4x4 marcoAnterior;
+    bool listo;
     float apertura;
-    const float Celda=.065f;
+    int cantidadVertices;
+
+    NativeArray<Vector3> verticesCapaNative, verticesTunicaNative, localesNative;
+    NativeArray<float3> puntos, antes, objetivos;
+    NativeArray<float2> coordenadas;
+    NativeArray<float> libre, largoAnclaje, espaldaGrid, contactoGrid;
+    NativeArray<int> superficie, penetracionesOut;
+    NativeArray<Enlace> enlaces;
+
+    const float Celda = .065f;
+    const int GridW = 64;
+    const int GridH = 32;
+    const int GridOffsetX = 32;
+
     void Start()
     {
-        if(capa==null||ropa==null){enabled=false;return;}
-        marco=capa.marco;origen=capa.tela.GetComponent<SkinnedMeshRenderer>();
-        capa.tela.enabled=false;origen.enabled=false;
-        horneada=new Mesh();origen.BakeMesh(horneada);
-        malla=Instantiate(origen.sharedMesh);malla.name="Capa flexible en contacto con tunica";malla.MarkDynamic();
-        var o=new GameObject("Capa · tela simulada sin cruces");o.transform.SetParent(origen.transform,false);salida=o.transform;
-        o.AddComponent<MeshFilter>().sharedMesh=malla;var r=o.AddComponent<MeshRenderer>();r.sharedMaterials=origen.sharedMaterials;r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
-        var uv=malla.uv;coordenadas=uv;var v=horneada.vertices;int n=v.Length;
-        puntos=new Vector3[n];antes=new Vector3[n];objetivos=new Vector3[n];locales=new Vector3[n];libre=new float[n];
-        for(int i=0;i<n;i++){v[i].x*=1.16f;puntos[i]=antes[i]=origen.transform.TransformPoint(v[i]);libre[i]=uv[i].y<.075f?0:1;}
-        const int ancho=33,alto=43;
-        for(int y=0;y<alto;y++)for(int x=0;x<ancho;x++)
+        if (capa == null || ropa == null || capa.tela == null || ropa.salida == null || ropa.salida.sharedMesh == null)
         {
-            int a=y*ancho+x;
-            if(x+1<ancho)Agregar(a,a+1,1);
-            if(y+1<alto)Agregar(a,a+ancho,1);
-            if(x+1<ancho&&y+1<alto){Agregar(a,a+ancho+1,.65f);Agregar(a+1,a+ancho,.65f);}
-            if(y+2<alto)Agregar(a,a+ancho*2,.35f);
+            enabled = false;
+            return;
         }
-        var usados=new HashSet<int>(ropa.salida.sharedMesh.triangles);superficie=new int[usados.Count];usados.CopyTo(superficie);
-        largoAnclaje=new float[n];for(int i=0;i<n;i++)largoAnclaje[i]=Vector3.Distance(puntos[i],puntos[i%33+66]);
-        ultima=transform.position;marcoAnterior=marco.localToWorldMatrix;listo=true;
+
+        marco = capa.marco;
+        origen = capa.tela.GetComponent<SkinnedMeshRenderer>();
+        if (marco == null || origen == null || origen.sharedMesh == null)
+        {
+            enabled = false;
+            return;
+        }
+
+        capa.tela.enabled = false;
+        origen.enabled = false;
+        horneada = new Mesh();
+        horneada.MarkDynamic();
+        origen.BakeMesh(horneada);
+
+        malla = Instantiate(origen.sharedMesh);
+        malla.name = "Capa flexible en contacto con tunica";
+        malla.MarkDynamic();
+
+        var o = new GameObject("Capa · tela simulada sin cruces");
+        o.transform.SetParent(origen.transform, false);
+        salida = o.transform;
+        o.AddComponent<MeshFilter>().sharedMesh = malla;
+        var r = o.AddComponent<MeshRenderer>();
+        r.sharedMaterials = origen.sharedMaterials;
+        r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+        var uv = malla.uv;
+        var v = horneada.vertices;
+        int n = v.Length;
+        cantidadVertices = n;
+
+        locales = new Vector3[n];
+        verticesCapaNative = new NativeArray<Vector3>(n, Allocator.Persistent);
+        localesNative = new NativeArray<Vector3>(n, Allocator.Persistent);
+        puntos = new NativeArray<float3>(n, Allocator.Persistent);
+        antes = new NativeArray<float3>(n, Allocator.Persistent);
+        objetivos = new NativeArray<float3>(n, Allocator.Persistent);
+        coordenadas = new NativeArray<float2>(n, Allocator.Persistent);
+        libre = new NativeArray<float>(n, Allocator.Persistent);
+        largoAnclaje = new NativeArray<float>(n, Allocator.Persistent);
+
+        for (int i = 0; i < n; i++)
+        {
+            v[i].x *= 1.16f;
+            float3 p = origen.transform.TransformPoint(v[i]);
+            puntos[i] = p;
+            antes[i] = p;
+            Vector2 coord = i < uv.Length ? uv[i] : Vector2.zero;
+            coordenadas[i] = coord;
+            libre[i] = coord.y < .075f ? 0f : 1f;
+        }
+
+        const int ancho = 33, alto = 43;
+        var listaEnlaces = new List<Enlace>(ancho * alto * 5);
+        for (int y = 0; y < alto; y++)
+        {
+            for (int x = 0; x < ancho; x++)
+            {
+                int a = y * ancho + x;
+                if (a >= n) continue;
+                if (x + 1 < ancho && a + 1 < n) Agregar(listaEnlaces, a, a + 1, 1f);
+                if (y + 1 < alto && a + ancho < n) Agregar(listaEnlaces, a, a + ancho, 1f);
+                if (x + 1 < ancho && y + 1 < alto && a + ancho + 1 < n)
+                {
+                    Agregar(listaEnlaces, a, a + ancho + 1, .65f);
+                    Agregar(listaEnlaces, a + 1, a + ancho, .65f);
+                }
+                if (y + 2 < alto && a + ancho * 2 < n) Agregar(listaEnlaces, a, a + ancho * 2, .35f);
+            }
+        }
+
+        enlaces = new NativeArray<Enlace>(listaEnlaces.Count, Allocator.Persistent);
+        for (int i = 0; i < listaEnlaces.Count; i++) enlaces[i] = listaEnlaces[i];
+
+        var usados = new HashSet<int>(ropa.salida.sharedMesh.triangles);
+        superficie = new NativeArray<int>(usados.Count, Allocator.Persistent);
+        int idx = 0;
+        foreach (int s in usados) superficie[idx++] = s;
+
+        verticesTunicaNative = new NativeArray<Vector3>(ropa.salida.sharedMesh.vertexCount, Allocator.Persistent);
+
+        for (int i = 0; i < n; i++)
+        {
+            int anclaIdx = i % 33 + 66;
+            largoAnclaje[i] = anclaIdx < n ? math.distance(puntos[i], puntos[anclaIdx]) : 0f;
+        }
+
+        espaldaGrid = new NativeArray<float>(GridW * GridH, Allocator.Persistent);
+        contactoGrid = new NativeArray<float>(GridW * GridH, Allocator.Persistent);
+        penetracionesOut = new NativeArray<int>(1, Allocator.Persistent);
+
+        ultima = transform.position;
+        marcoAnterior = marco.localToWorldMatrix;
+        listo = true;
     }
-    void Agregar(int a,int b,float rigidez){enlaces.Add(new Enlace{a=a,b=b,largo=Vector3.Distance(puntos[a],puntos[b]),rigidez=rigidez});}
+
+    void Agregar(List<Enlace> lista, int a, int b, float rigidez)
+    {
+        lista.Add(new Enlace { a = a, b = b, largo = math.distance(puntos[a], puntos[b]), rigidez = rigidez });
+    }
+
     void LateUpdate()
     {
-        if(!listo)return;
-        float dt=Mathf.Clamp(Time.deltaTime,.001f,.0333f);
+        if (!listo || ropa.salida == null || ropa.salida.sharedMesh == null) return;
+
+        float dt = Mathf.Clamp(Time.deltaTime, .001f, .0333f);
         origen.BakeMesh(horneada);
-        horneada.GetVertices(verticesCapa);
-        Vector3 traslado=transform.position-ultima;ultima=transform.position;
-        bool teleport=traslado.magnitude>2;
-        apertura=Mathf.Lerp(apertura,Mathf.Clamp01(capa.Rapidez/4.8f),1-Mathf.Exp(-dt*3.5f));
-        var transporte=marco.localToWorldMatrix*marcoAnterior.inverse;marcoAnterior=marco.localToWorldMatrix;
-        ConstruirEspalda();
-        for(int i=0;i<puntos.Length;i++)
+
+        using (var capaData = Mesh.AcquireReadOnlyMeshData(horneada))
         {
-            var basePose=verticesCapa[i];
-            basePose.x*=1.16f;objetivos[i]=origen.transform.TransformPoint(basePose);
-            if(libre[i]==0){var q=marco.InverseTransformPoint(objetivos[i]);if(Limite(q,out float z)){q.z=Mathf.Min(q.z,z);objetivos[i]=marco.TransformPoint(q);}}
-            puntos[i]=transporte.MultiplyPoint3x4(puntos[i]);antes[i]=transporte.MultiplyPoint3x4(antes[i]);
-            if(teleport){puntos[i]=antes[i]=objetivos[i];}
-            if(libre[i]==0){puntos[i]=antes[i]=objetivos[i];continue;}
-            Vector3 inercia=Vector3.ClampMagnitude(puntos[i]-antes[i],.09f)*Mathf.Exp(-dt*2.0f);
-            antes[i]=puntos[i];
-            float caida=coordenadas[i].y,ancho=coordenadas[i].x;
-            float carrera=Mathf.Clamp01(capa.Rapidez/4.8f);
-            // Distributed pressure travels from the shoulders towards the hem.
-            // The hem is free to lift and flutter; the neck remains attached.
-            float onda=Mathf.Sin(Time.time*8.3f-caida*7+ancho*2.4f);
-            Vector3 viento=capa.tela.externalAcceleration
-                +marco.up*(carrera*(24+onda*12)*caida)
-                -marco.forward*(carrera*(14+onda*9)*caida)
-                +marco.right*(Mathf.Sin(Time.time*6-caida*5)*carrera*3*caida);
-            puntos[i]+=inercia+(Physics.gravity+viento)*dt*dt;
+            capaData[0].GetVertices(verticesCapaNative);
         }
-        // Short substeps and structural/shear constraints retain the cloth's size.
-        for(int paso=0;paso<16;paso++)
+
+        Mesh tunicaMesh = ropa.salida.sharedMesh;
+        if (!verticesTunicaNative.IsCreated || verticesTunicaNative.Length != tunicaMesh.vertexCount)
         {
-            foreach(var e in enlaces)
-            {
-                Vector3 d=puntos[e.b]-puntos[e.a];float l=d.magnitude,w=libre[e.a]+libre[e.b];
-                if(l<.000001f||w==0)continue;
-                // Resist extension, but allow the sheet to gather and fold.
-                // Pushing compressed links apart was keeping the idle corners rigid.
-                float rigidez=l<e.largo?e.rigidez*.06f:e.rigidez;
-                Vector3 ajuste=d*((l-e.largo)/l*rigidez/w);
-                puntos[e.a]+=ajuste*libre[e.a];puntos[e.b]-=ajuste*libre[e.b];
-            }
-            for(int i=0;i<puntos.Length;i++)
-            {
-                if(libre[i]==0){puntos[i]=objetivos[i];continue;}
-                // Keep the cloth spread across the back. Prevent adjacent rows
-                // from folding through each other and bunching at the centre.
-                var q=marco.InverseTransformPoint(puntos[i]);var refLocal=marco.InverseTransformPoint(objetivos[i]);
-                float t=coordenadas[i].y;
-                float desplazar=Mathf.Sin(Time.time*5.2f-t*4)*.025f*t*Mathf.Clamp01(capa.Rapidez/4.8f);
-                float reposo=1-apertura;
-                float recoger=Mathf.Lerp(.66f,1,apertura);
-                q.x=Mathf.Lerp(q.x,refLocal.x*recoger+desplazar,Mathf.Lerp(.075f,.20f,apertura));
-                float borde=Mathf.Pow(Mathf.Abs(coordenadas[i].x-.5f)*2,3);
-                if(t<.5f)q.y=Mathf.Lerp(q.y,Mathf.Min(q.y,refLocal.y-.065f*borde*reposo),.04f);
-                if(i>=33){var filaAnterior=marco.InverseTransformPoint(puntos[i-33]);q.y=Mathf.Min(q.y,filaAnterior.y-.004f);}
-                puntos[i]=marco.TransformPoint(q);
-                var ancla=objetivos[i%33+66];var d=puntos[i]-ancla;float maximo=largoAnclaje[i];if(d.sqrMagnitude>maximo*maximo)puntos[i]=ancla+d.normalized*maximo;
-                Contacto(i);
-            }
+            if (verticesTunicaNative.IsCreated) verticesTunicaNative.Dispose();
+            verticesTunicaNative = new NativeArray<Vector3>(tunicaMesh.vertexCount, Allocator.Persistent);
         }
-        Penetraciones=0;
-        for(int i=0;i<puntos.Length;i++)
+        using (var tunicaData = Mesh.AcquireReadOnlyMeshData(tunicaMesh))
         {
-            var desviacion = (puntos[i]-objetivos[i]).sqrMagnitude;
-            if (float.IsNaN(desviacion) || desviacion > 2.25f)
-                puntos[i]=antes[i]=objetivos[i];
-            if(libre[i]>0){var q=marco.InverseTransformPoint(puntos[i]);if(Limite(q,out float z)&&q.z>z+.002f)Penetraciones++;}
-            locales[i]=salida.InverseTransformPoint(puntos[i]);
+            tunicaData[0].GetVertices(verticesTunicaNative);
         }
-        malla.vertices=locales;malla.RecalculateNormals();malla.RecalculateBounds();
+
+        Vector3 traslado = transform.position - ultima;
+        ultima = transform.position;
+        bool teleport = traslado.magnitude > 2f;
+
+        apertura = Mathf.Lerp(apertura, Mathf.Clamp01(capa.Rapidez / 4.8f), 1f - Mathf.Exp(-dt * 3.5f));
+        Matrix4x4 actual = marco.localToWorldMatrix;
+        Matrix4x4 transporte = actual * marcoAnterior.inverse;
+        marcoAnterior = actual;
+
+        var job = new SimularCapaJob
+        {
+            verticesCapa = verticesCapaNative,
+            verticesTunica = verticesTunicaNative,
+            superficie = superficie,
+            coordenadas = coordenadas,
+            libre = libre,
+            largoAnclaje = largoAnclaje,
+            enlaces = enlaces,
+            puntos = puntos,
+            antes = antes,
+            objetivos = objetivos,
+            espaldaGrid = espaldaGrid,
+            contactoGrid = contactoGrid,
+            localesOut = localesNative,
+            penetracionesOut = penetracionesOut,
+            aMarcoTunica = marco.worldToLocalMatrix * ropa.salida.transform.localToWorldMatrix,
+            origenLocalToWorld = origen.transform.localToWorldMatrix,
+            marcoLocalToWorld = actual,
+            marcoWorldToLocal = marco.worldToLocalMatrix,
+            salidaWorldToLocal = salida.worldToLocalMatrix,
+            transporte = transporte,
+            externalAccel = capa.tela.externalAcceleration,
+            gravity = Physics.gravity,
+            marcoUp = marco.up,
+            marcoForward = marco.forward,
+            marcoRight = marco.right,
+            dt = dt,
+            tiempo = Time.time,
+            apertura = apertura,
+            rapidez = capa.Rapidez,
+            separacion = separacion,
+            teleport = teleport,
+            cantidadVertices = cantidadVertices
+        };
+
+        job.Run();
+
+        Penetraciones = penetracionesOut[0];
+        NativeArray<Vector3>.Copy(localesNative, locales);
+        malla.SetVertices(localesNative);
+        malla.RecalculateNormals();
+        malla.RecalculateBounds();
     }
-    void ConstruirEspalda()
+
+    [BurstCompile(FloatMode = FloatMode.Fast)]
+    struct SimularCapaJob : IJob
     {
-        espalda.Clear();
-        contactoEspalda.Clear();
-        ropa.salida.sharedMesh.GetVertices(verticesTunica);
-        var aMarco = marco.worldToLocalMatrix * ropa.salida.transform.localToWorldMatrix;
-        foreach(int i in superficie)
+        [ReadOnly] public NativeArray<Vector3> verticesCapa, verticesTunica;
+        [ReadOnly] public NativeArray<int> superficie;
+        [ReadOnly] public NativeArray<float2> coordenadas;
+        [ReadOnly] public NativeArray<float> libre, largoAnclaje;
+        [ReadOnly] public NativeArray<Enlace> enlaces;
+
+        public NativeArray<float3> puntos, antes, objetivos;
+        public NativeArray<float> espaldaGrid, contactoGrid;
+        [WriteOnly] public NativeArray<Vector3> localesOut;
+        [WriteOnly] public NativeArray<int> penetracionesOut;
+
+        public float4x4 aMarcoTunica, origenLocalToWorld, marcoLocalToWorld, marcoWorldToLocal, salidaWorldToLocal, transporte;
+        public float3 externalAccel, gravity, marcoUp, marcoForward, marcoRight;
+        public float dt, tiempo, apertura, rapidez, separacion;
+        public bool teleport;
+        public int cantidadVertices;
+
+        public void Execute()
         {
-            Vector3 q=aMarco.MultiplyPoint3x4(verticesTunica[i]);
-            if(q.y<.40f||q.y>1.58f)continue;
-            var key=new Vector2Int(Mathf.RoundToInt(q.x/Celda),Mathf.RoundToInt(q.y/Celda));
-            if(!espalda.TryGetValue(key,out float z)||q.z<z)espalda[key]=q.z;
-        }
-        foreach(var celda in espalda)
-            for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++)
+            // Build flat spatial heightfield of the back of the tunic in marco space (L1-cache friendly).
+            int totalCeldas = GridW * GridH;
+            for (int c = 0; c < totalCeldas; c++)
             {
-                var destino=celda.Key+new Vector2Int(x,y);
-                float limite=celda.Value-separacion;
-                if(!contactoEspalda.TryGetValue(destino,out float anteriorZ) || limite<anteriorZ)
-                    contactoEspalda[destino]=limite;
+                espaldaGrid[c] = float.PositiveInfinity;
+                contactoGrid[c] = float.PositiveInfinity;
             }
-    }
-    bool Limite(Vector3 q,out float limite)
-    {
-        var key=new Vector2Int(Mathf.RoundToInt(q.x/Celda),Mathf.RoundToInt(q.y/Celda));
-        return contactoEspalda.TryGetValue(key,out limite);
-    }
-    void Contacto(int i)
-    {
-        Vector3 q=marco.InverseTransformPoint(puntos[i]);
-        if(Limite(q,out float z)&&q.z>z)
+
+            int supLen = superficie.Length;
+            for (int s = 0; s < supLen; s++)
+            {
+                int vi = superficie[s];
+                float3 q = math.mul(aMarcoTunica, new float4((float3)verticesTunica[vi], 1f)).xyz;
+                if (q.y < .40f || q.y > 1.58f) continue;
+                int gx = (int)math.round(q.x / Celda) + GridOffsetX;
+                int gy = (int)math.round(q.y / Celda);
+                if (gx < 0 || gx >= GridW || gy < 0 || gy >= GridH) continue;
+                int idx = gy * GridW + gx;
+                if (q.z < espaldaGrid[idx]) espaldaGrid[idx] = q.z;
+            }
+
+            for (int gy = 0; gy < GridH; gy++)
+            {
+                int row = gy * GridW;
+                for (int gx = 0; gx < GridW; gx++)
+                {
+                    float z = espaldaGrid[row + gx];
+                    if (float.IsPositiveInfinity(z)) continue;
+                    float limite = z - separacion;
+                    for (int dy = -1; dy <= 1; dy++)
+                    {
+                        int ny = gy + dy;
+                        if (ny < 0 || ny >= GridH) continue;
+                        int nRow = ny * GridW;
+                        for (int dx = -1; dx <= 1; dx++)
+                        {
+                            int nx = gx + dx;
+                            if (nx < 0 || nx >= GridW) continue;
+                            int nIdx = nRow + nx;
+                            if (limite < contactoGrid[nIdx]) contactoGrid[nIdx] = limite;
+                        }
+                    }
+                }
+            }
+
+            float carrera = math.saturate(rapidez / 4.8f);
+            float expInercia = math.exp(-dt * 2.0f);
+            float dt2 = dt * dt;
+
+            for (int i = 0; i < cantidadVertices; i++)
+            {
+                float3 basePose = (float3)verticesCapa[i];
+                basePose.x *= 1.16f;
+                float3 obj = math.mul(origenLocalToWorld, new float4(basePose, 1f)).xyz;
+                if (libre[i] == 0f)
+                {
+                    float3 q = math.mul(marcoWorldToLocal, new float4(obj, 1f)).xyz;
+                    if (Limite(q, out float zLim))
+                    {
+                        q.z = math.min(q.z, zLim);
+                        obj = math.mul(marcoLocalToWorld, new float4(q, 1f)).xyz;
+                    }
+                }
+                objetivos[i] = obj;
+
+                float3 p = math.mul(transporte, new float4(puntos[i], 1f)).xyz;
+                float3 a = math.mul(transporte, new float4(antes[i], 1f)).xyz;
+                if (teleport || libre[i] == 0f)
+                {
+                    puntos[i] = obj;
+                    antes[i] = obj;
+                    continue;
+                }
+
+                float3 diff = p - a;
+                float diffSq = math.lengthsq(diff);
+                float3 inercia = (diffSq > .09f * .09f ? diff * (.09f * math.rsqrt(diffSq)) : diff) * expInercia;
+                antes[i] = p;
+
+                float2 coord = coordenadas[i];
+                float caida = coord.y;
+                float ancho = coord.x;
+                float onda = math.sin(tiempo * 8.3f - caida * 7f + ancho * 2.4f);
+                float3 viento = externalAccel
+                    + marcoUp * (carrera * (24f + onda * 12f) * caida)
+                    - marcoForward * (carrera * (14f + onda * 9f) * caida)
+                    + marcoRight * (math.sin(tiempo * 6f - caida * 5f) * carrera * 3f * caida);
+                puntos[i] = p + inercia + (gravity + viento) * dt2;
+            }
+
+            float reposo = 1f - apertura;
+            float recoger = math.lerp(.66f, 1f, apertura);
+            float factorX = math.lerp(.075f, .20f, apertura);
+            int numEnlaces = enlaces.Length;
+
+            for (int paso = 0; paso < 16; paso++)
+            {
+                for (int ei = 0; ei < numEnlaces; ei++)
+                {
+                    Enlace e = enlaces[ei];
+                    float3 d = puntos[e.b] - puntos[e.a];
+                    float l = math.length(d);
+                    float la = libre[e.a];
+                    float lb = libre[e.b];
+                    float w = la + lb;
+                    if (l < .000001f || w == 0f) continue;
+                    float rig = l < e.largo ? e.rigidez * .06f : e.rigidez;
+                    float3 ajuste = d * ((l - e.largo) / l * rig / w);
+                    puntos[e.a] += ajuste * la;
+                    puntos[e.b] -= ajuste * lb;
+                }
+
+                for (int i = 0; i < cantidadVertices; i++)
+                {
+                    if (libre[i] == 0f)
+                    {
+                        puntos[i] = objetivos[i];
+                        continue;
+                    }
+
+                    float3 p = puntos[i];
+                    float3 q = math.mul(marcoWorldToLocal, new float4(p, 1f)).xyz;
+                    float3 refLocal = math.mul(marcoWorldToLocal, new float4(objetivos[i], 1f)).xyz;
+                    float2 coord = coordenadas[i];
+                    float t = coord.y;
+                    float desplazar = math.sin(tiempo * 5.2f - t * 4f) * .025f * t * carrera;
+                    q.x = math.lerp(q.x, refLocal.x * recoger + desplazar, factorX);
+                    float absB = math.abs(coord.x - .5f) * 2f;
+                    float borde = absB * absB * absB;
+                    if (t < .5f) q.y = math.lerp(q.y, math.min(q.y, refLocal.y - .065f * borde * reposo), .04f);
+                    if (i >= 33)
+                    {
+                        float3 filaAnterior = math.mul(marcoWorldToLocal, new float4(puntos[i - 33], 1f)).xyz;
+                        q.y = math.min(q.y, filaAnterior.y - .004f);
+                    }
+                    p = math.mul(marcoLocalToWorld, new float4(q, 1f)).xyz;
+
+                    float3 ancla = objetivos[i % 33 + 66];
+                    float3 d = p - ancla;
+                    float maximo = largoAnclaje[i];
+                    float dSq = math.lengthsq(d);
+                    if (dSq > maximo * maximo)
+                    {
+                        p = ancla + d * (maximo * math.rsqrt(dSq));
+                    }
+
+                    float3 qc = math.mul(marcoWorldToLocal, new float4(p, 1f)).xyz;
+                    if (Limite(qc, out float zLim) && qc.z > zLim)
+                    {
+                        qc.z = zLim;
+                        p = math.mul(marcoLocalToWorld, new float4(qc, 1f)).xyz;
+                        float3 anteriorLocal = math.mul(marcoWorldToLocal, new float4(antes[i], 1f)).xyz;
+                        anteriorLocal.z = math.min(anteriorLocal.z, zLim);
+                        antes[i] = math.mul(marcoLocalToWorld, new float4(anteriorLocal, 1f)).xyz;
+                    }
+                    puntos[i] = p;
+                }
+            }
+
+            int pen = 0;
+            for (int i = 0; i < cantidadVertices; i++)
+            {
+                float3 p = puntos[i];
+                float3 obj = objetivos[i];
+                float desviacion = math.lengthsq(p - obj);
+                if (float.IsNaN(desviacion) || desviacion > 2.25f)
+                {
+                    p = obj;
+                    puntos[i] = obj;
+                    antes[i] = obj;
+                }
+                if (libre[i] > 0f)
+                {
+                    float3 q = math.mul(marcoWorldToLocal, new float4(p, 1f)).xyz;
+                    if (Limite(q, out float zLim) && q.z > zLim + .002f) pen++;
+                }
+                localesOut[i] = math.mul(salidaWorldToLocal, new float4(p, 1f)).xyz;
+            }
+            penetracionesOut[0] = pen;
+        }
+
+        bool Limite(float3 q, out float limite)
         {
-            q.z=z;puntos[i]=marco.TransformPoint(q);
-            // Remove velocity into the garment; retain sliding along its surface.
-            Vector3 anteriorLocal=marco.InverseTransformPoint(antes[i]);anteriorLocal.z=Mathf.Min(anteriorLocal.z,z);antes[i]=marco.TransformPoint(anteriorLocal);
+            int gx = (int)math.round(q.x / Celda) + GridOffsetX;
+            int gy = (int)math.round(q.y / Celda);
+            if (gx < 0 || gx >= GridW || gy < 0 || gy >= GridH)
+            {
+                limite = float.PositiveInfinity;
+                return false;
+            }
+            limite = contactoGrid[gy * GridW + gx];
+            return !float.IsPositiveInfinity(limite);
         }
     }
-    void OnDestroy(){if(horneada!=null)Destroy(horneada);if(malla!=null)Destroy(malla);}
+
+    void OnDestroy()
+    {
+        if (verticesCapaNative.IsCreated) verticesCapaNative.Dispose();
+        if (verticesTunicaNative.IsCreated) verticesTunicaNative.Dispose();
+        if (localesNative.IsCreated) localesNative.Dispose();
+        if (puntos.IsCreated) puntos.Dispose();
+        if (antes.IsCreated) antes.Dispose();
+        if (objetivos.IsCreated) objetivos.Dispose();
+        if (coordenadas.IsCreated) coordenadas.Dispose();
+        if (libre.IsCreated) libre.Dispose();
+        if (largoAnclaje.IsCreated) largoAnclaje.Dispose();
+        if (espaldaGrid.IsCreated) espaldaGrid.Dispose();
+        if (contactoGrid.IsCreated) contactoGrid.Dispose();
+        if (superficie.IsCreated) superficie.Dispose();
+        if (penetracionesOut.IsCreated) penetracionesOut.Dispose();
+        if (enlaces.IsCreated) enlaces.Dispose();
+        if (horneada != null) Destroy(horneada);
+        if (malla != null) Destroy(malla);
+    }
 }

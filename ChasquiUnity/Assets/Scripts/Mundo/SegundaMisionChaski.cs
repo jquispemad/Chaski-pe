@@ -21,6 +21,9 @@ public sealed class SegundaMisionChaski : MonoBehaviour
     RenderTexture imagen;
     float actualizarMapa;
     ArroyoSierraChaski cauce;
+    CharacterController ccJugador;
+    readonly System.Collections.Generic.Dictionary<int, GUIStyle> estilosCache = new System.Collections.Generic.Dictionary<int, GUIStyle>();
+    GUIStyle botonCache;
     readonly float[] controles = { 82, 245, 302 };
     readonly string[] conversacion = {
         "WAYRA\nTraigo el quipu de la posta del pueblo. El paso del río sigue abierto y pueden enviar provisiones.",
@@ -35,6 +38,7 @@ public sealed class SegundaMisionChaski : MonoBehaviour
     {
         Time.timeScale = 1;
         cauce=FindFirstObjectByType<ArroyoSierraChaski>();
+        ccJugador = jugador != null ? jugador.GetComponent<CharacterController>() : null;
         control = jugador.transform.position;
         seguimiento = vista.GetComponent<CamaraChasqui>();
         audioNivel = GetComponent<AudioPrimeraMision>();
@@ -107,7 +111,7 @@ public sealed class SegundaMisionChaski : MonoBehaviour
         }
         float distancia = Vector2.Distance(new Vector2(p.x,p.z),new Vector2(entrega.position.x,entrega.position.z));
         quieto = anunciado && jugador.enabled && etapa == controles.Length && distancia < 1.3f && jugador.EnSuelo &&
-            jugador.GetComponent<CharacterController>().velocity.sqrMagnitude < .09f ? quieto + Time.deltaTime : 0;
+            (ccJugador != null ? ccJugador.velocity.sqrMagnitude : 0f) < .09f ? quieto + Time.deltaTime : 0;
         if (quieto > 1f)
         {
             dialogo = 0; jugador.enabled = false; seguimiento.enabled = false;
@@ -133,9 +137,14 @@ public sealed class SegundaMisionChaski : MonoBehaviour
 
     void Avisar(string mensaje, float segundos) { aviso = mensaje; avisoHasta = Time.time + segundos; }
 
-    GUIStyle Estilo(int tamano, bool grande = false) => new GUIStyle(GUI.skin.label) {
-        font = grande ? titulo : texto, fontSize = tamano, wordWrap = true,
-        normal = {textColor = new Color(.99f,.9f,.7f)} };
+    GUIStyle Estilo(int tamano, bool grande = false) {
+        int key = (tamano << 1) | (grande ? 1 : 0);
+        if (!estilosCache.TryGetValue(key, out var st)) {
+            st = new GUIStyle(GUI.skin.label) { font = grande ? titulo : texto, fontSize = tamano, wordWrap = true, normal = { textColor = new Color(.99f, .9f, .7f) } };
+            estilosCache[key] = st;
+        }
+        return st;
+    }
     static void Panel(Rect r)
     {
         var c = GUI.color; GUI.color = new Color(.14f,.075f,.035f,.94f);
@@ -201,14 +210,14 @@ public sealed class SegundaMisionChaski : MonoBehaviour
         if(mapa==null)return; var v=mapa.WorldToViewportPoint(p);var c=GUI.color;GUI.color=color;
         GUI.DrawTexture(new Rect(r.x+Mathf.Clamp01(v.x)*r.width-lado/2,r.y+(1-Mathf.Clamp01(v.y))*r.height-lado/2,lado,lado),Texture2D.whiteTexture);GUI.color=c;
     }
-    GUIStyle Boton() => new GUIStyle(GUI.skin.button){font=texto,fontSize=20};
+    GUIStyle Boton() => botonCache ?? (botonCache = new GUIStyle(GUI.skin.button){font=texto,fontSize=20});
     void Final(float w,float h)
     {
         if(manta==null)manta=InterfazIncaChasqui.CrearTejido();
         var r=new Rect(w/2-440,h/2-265,880,530);GUI.DrawTexture(r,manta);
-        var estilo=Estilo(31,true);estilo.alignment=TextAnchor.MiddleCenter;
+        var estilo=new GUIStyle(Estilo(31,true)){alignment=TextAnchor.MiddleCenter};
         GUI.Label(new Rect(r.x+60,r.y+70,760,55),"MENSAJE ENTREGADO",estilo);
-        estilo=Estilo(23);estilo.alignment=TextAnchor.MiddleCenter;
+        estilo=new GUIStyle(Estilo(23)){alignment=TextAnchor.MiddleCenter};
         GUI.Label(new Rect(r.x+75,r.y+160,730,130),"La posta recibió tu aviso.\nEl relevista no ha regresado.\nUn nuevo encargo te llevará a la estación del valle.",estilo);
         if(GUI.Button(new Rect(r.x+65,r.y+335,230,60),"↻ Repetir",Boton()))
         { PlayerPrefs.DeleteKey("Chaski.Nivel02.Control"); Cargar("Nivel02_PrimerRecorrido"); }
